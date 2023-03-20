@@ -1,0 +1,745 @@
+2013-12-23 19:45:43 c816b11 Create README files.
+2013-12-23 19:53:34 bb2279e Add lexer.
+2013-12-23 22:54:14 f323d6a Clean up lexing macro use.
+2013-12-23 23:13:24 db3ae4e Move yytext and yynumber into js_State.
+2013-12-24 00:35:46 e370296 Lex regular expression literals.
+2013-12-24 13:45:50 11730a9 Free dynamically allocated yytext when closing.
+2013-12-27 15:54:35 294a803 Print error message with line number on lexical errors.
+2013-12-27 18:31:17 e01fe42 Check hex string escapes so we don't read past the end of the string.
+2013-12-27 18:31:17 cb27384 Throw errors on future words immediately.
+2013-12-27 23:54:45 a4e846b Prepare lexer for hooking up to generated parser.
+2013-12-28 12:54:41 42683b9 Minor cleanups.
+2013-12-28 12:55:44 e928c14 Set newline flag if a token is preceded by a line terminator.
+2013-12-28 17:39:47 dde8db5 Add [no line-terminator here] context handling in lexer.
+2013-12-30 22:58:43 429d7cd Fix typo so all arguments are loaded.
+2014-01-02 14:00:31 bc914e6 Support line continuation escapes in string literals.
+2014-01-02 21:52:15 ce69f95 Treat BOM as whitespace.
+2014-01-08 21:02:39 adbbeec String interning table.
+2014-01-09 17:24:21 58fdded Add syntax tree structs.
+2014-01-09 17:24:21 5ead782 Recursive descent parser for expressions.
+2014-01-09 17:24:21 157e30c Handle "exp [NLTH] ++" case in parser rather than lexer.
+2014-01-09 17:24:21 c3a035d Use setjmp/longjmp to handle parsing errors.
+2014-01-09 17:24:21 2cfaefe Add token string lookup table for better error messages.
+2014-01-09 20:31:26 58d1b72 Fix typo. Remove ID macro.
+2014-01-09 23:42:23 659e559 Parse statements.
+2014-01-10 01:48:38 380be81 Parse labelled statements.
+2014-01-10 01:48:38 08c76bd Pretty print and indent STM_BLOCK nodes.
+2014-01-10 01:48:38 45e2f80 Clean up interface between lexer and parser.
+2014-01-10 02:49:15 747a938 Parse regexp.
+2014-01-10 03:27:52 948d6a9 Pretty-print AST to javascript syntax.
+2014-01-10 10:35:37 27ce19d Remove pointless STM_BLOCK nodes.
+2014-01-10 11:12:18 24e9127 Style cleanup.
+2014-01-10 11:13:03 4eb3349 Fix makefile.
+2014-01-10 11:23:45 228cbca Reorder statement cases to align with spec text.
+2014-01-10 11:29:53 8c21bb0 Parse array literals with elisions.
+2014-01-10 14:37:57 8342452 Rename files and put stuff in the correct headers.
+2014-01-10 14:37:57 3f564db Clean split between loader, parser and pretty-printer.
+2014-01-10 14:38:01 effc3ae Add constant folding.
+2014-01-10 16:55:36 7e40d3f Ensure that we can seek in the file in js_loadfile.
+2014-01-10 19:50:01 9db2fce Add proper pretty-printing functions.
+2014-01-10 23:29:54 33c60e4 Fix bug.
+2014-01-11 12:47:08 a476ffc Preserve regexp flags. Escape more characters when dumping strings.
+2014-01-11 13:03:58 d9588c2 Add UNDEF expression to handle array elisions properly.
+2014-01-11 18:11:23 88abe2c Fix parser bugs.
+2014-01-11 18:11:23 e23d207 Check future reserved words in parser to allow them as IdentifierName tokens.
+2014-01-11 18:11:23 74f2ad2 Count lines in block comments as well.
+2014-01-11 18:11:23 d81fc84 Improve regexp context detection.
+2014-01-11 18:11:23 f36eb04 Track newlines properly.
+2014-01-11 18:11:23 8a1c1c2 Add warning function to parser. Warn but accept function expressions as expression statements.
+2014-01-12 13:39:22 3776ea2 Simplify constant folding function.
+2014-01-12 13:39:42 5756da5 Begin generating byte code.
+2014-01-12 13:39:47 fb30504 Improve naming of macros in lexer.
+2014-01-12 13:39:47 50d5cb9 Auto-generate list of operator names.
+2014-01-12 13:39:48 1122d1f Improve opcode naming.
+2014-01-12 13:39:48 67de496 Use special TCALL opcode for foo.bar() calls that set 'this' for the call.
+2014-01-12 13:39:48 62fea90 Compile logical or/and operators with early termination.
+2014-01-12 14:11:08 7f3673f Document some trickier byte codes.
+2014-01-12 14:18:51 dceb420 Use emitname() for identifiers, and emitstring() for string literals.
+2014-01-12 15:31:43 52f78c5 Compile sub-functions.
+2014-01-12 16:25:22 d8576fe Create var bindings for self function and function declarations.
+2014-01-12 17:16:11 c672370 Separate variable declaration and initialization.
+2014-01-12 17:53:43 58b2607 Add while loops.
+2014-01-13 14:33:48 d3d0731 Set 'this' object for all types of function calls.
+2014-01-13 14:56:17 4b981fa Clean up handling of function declarations / statements / expressions.
+2014-01-13 17:21:38 8931046 Optimise string interning.
+2014-01-13 21:32:33 a4cc139 Add js_Object with js_Property binary search tree.
+2014-01-14 02:06:57 8d5ace5 Fix compilation warning.
+2014-01-14 18:17:06 f77a6e7 Implement value stack and use it in the interpreter.
+2014-01-14 19:06:44 6d690be Normal for statement.
+2014-01-15 00:36:22 6b1906f Add for-in iterator.
+2014-01-15 01:34:30 47e88ac Calculate stack index for both positive and negative numbers.
+2014-01-15 02:21:34 a859bc6 Don't bother setting undefined slots in array literal elisions.
+2014-01-15 17:03:12 6ba9e94 js_pushlstring() for pushing literal (and interned strings).
+2014-01-15 23:41:41 ede0f88 Prepare for objects with internal properties, and closures as objects.
+2014-01-16 00:23:27 4a3fdce Functions!
+2014-01-16 02:04:25 f7cdddb Remember main.c in tags.
+2014-01-16 02:14:07 18b192b Minor cleanups.
+2014-01-16 02:14:07 0f87d01 Add callable CFunctions and a print() function.
+2014-01-16 02:36:00 d274131 More cleanups.
+2014-01-16 14:15:17 3715d6d Add JS_NORETURN declaration to longjumping functions.
+2014-01-16 20:48:43 288eef8 Clean up. Rearrange files. Rename functions.
+2014-01-16 20:48:43 7228ec5 Handle "this" by always keeping it in stack[0].
+2014-01-16 20:48:43 e01b4d0 Beautify opcode dumping format.
+2014-01-16 21:36:54 56042de Fix the shape of the outer API a bit. Implement eval.
+2014-01-17 03:03:10 b595422 Add object property accessor functions to public API.
+2014-01-17 03:21:20 2a027a1 String concatenation.
+2014-01-17 14:58:03 f6c5c56 Keep the current environment scope chain in the js_State struct.
+2014-01-17 15:58:51 10ffd55 Compile global/eval code as script objects rather than regular functions.
+2014-01-17 16:00:51 5ce44f9 Remember file name and line where a function object came from.
+2014-01-17 19:41:41 f487a7d Set prototype internal property when creating objects.
+2014-01-17 21:03:22 060dbbb Create function objects with initial properties.
+2014-01-17 21:09:53 0d595bd Define some global functions and values.
+2014-01-17 21:10:54 e431170 Improve stackidx function to return "undefined" for out-of-bounds accesses.
+2014-01-17 22:03:35 81b2bb9 Add constructors called with 'new' keyword.
+2014-01-17 22:42:15 299dbda Move stack into state.
+2014-01-17 23:02:14 96ca91e Garbage collector lists.
+2014-01-18 00:02:04 704d164 Collect garbage.
+2014-01-18 00:57:18 ffc82ea Add allocation counter to trigger garbage collector during interpretation.
+2014-01-18 01:15:10 702fb1e Rename functions that push new objects on the stack.
+2014-01-18 01:22:11 f8ff865 Move object creation functions into jsobject.c
+2014-01-18 11:45:39 359ba13 Remember to remove openames.h when cleaning.
+2014-01-18 15:08:18 cb5af5f Import UTF-8 and runestring functions from plan9port.
+2014-01-18 15:10:57 442b8d2 Rename AST free-list.
+2014-01-18 15:10:57 7bf5257 Save line number where the token starts for improved error messages.
+2014-01-18 15:10:57 63d88a9 Rewrite lexer to use a proper lookahead token.
+2014-01-18 15:15:30 bfab4a4 Fix bug in number parsing.
+2014-01-18 15:38:17 f12fe6c Constify libutf.
+2014-01-18 15:52:48 dbc00e4 Parse UTF-8 source text.
+2014-01-18 16:13:23 8c7f4dc Handle \uXXXX escapes in identifiers.
+2014-01-18 16:27:10 a3aa9e7 Simplify newline tests since we normalize line endings in next().
+2014-01-18 16:49:00 8e20fae Don't pass pointless 'sp' pointer throughout lexer now that we use a real next() function to advance through the source.
+2014-01-18 17:19:31 9650392 Return value of last evaluated expression in eval and script code.
+2014-01-18 17:38:40 24f4830 Support 'typeof' operator.
+2014-01-18 17:44:20 d3d9229 Reorder switch cases to match opcode order.
+2014-01-18 18:20:33 05275e2 Implement relational and equality operators.
+2014-01-18 20:16:28 07610bd Refactor ToString and ToNumber functions. Add ToPrimitive.
+2014-01-18 22:04:37 a592f61 Implement Number and Object classes.
+2014-01-19 01:50:41 1237388 More builtins. Fix prototype chains for builtin classes and prototypes.
+2014-01-19 13:28:01 0feb630 Implement Function.prototype.apply()
+2014-01-19 13:29:38 95ac24c Put js_Object contents in a union.
+2014-01-19 13:33:29 48e3fdb Alloc interned strings at the end of the string nodes.
+2014-01-19 14:24:21 3da0569 Implement Function.prototype.toString()
+2014-01-19 14:25:00 ce0a690 Create readonly length property on string objects.
+2014-01-19 14:55:19 32c0c6c Rename jsR_numbertostring to jsR_stringfromnumber.
+2014-01-19 15:06:10 f3ea55f Implement String.prototype.charAt and charCodeAt.
+2014-01-19 15:24:03 58421f1 Optimize String.prototype.charAt and charCodeAt.
+2014-01-19 15:45:29 0467057 Use ECMA-262 r5 semantics for missing this argument to call/apply.
+2014-01-19 16:18:17 fea397f Implement Math object.
+2014-01-19 16:20:59 3c58fa9 Fix bug in toFixed, toPrecision and toExponential.
+2014-01-20 00:13:47 8aa0627 Add Error builtin objects and exception stack.
+2014-01-20 16:13:09 40a12fb Split header into js.h public and jsi.h private. Start cleaning up private function prefixes.
+2014-01-20 16:18:49 759acbd Add enum-to-string functions for syntax tree and opcodes.
+2014-01-20 17:44:56 b262cc3 Rename many jsR functions to jsV.
+2014-01-20 18:27:52 7c82ec2 Clean up error object creation and throwing functions.
+2014-01-20 23:15:39 26cde86 Fix constructors to return the created object if the function doesn't.
+2014-01-20 23:16:07 6c8400d Fix CFunction calling conventions.
+2014-01-21 13:58:32 3a92e13 Rename files and move a few functions around.
+2014-01-21 14:14:51 ca79fc1 jsmath.c expanded
+2014-01-21 15:15:22 5cdcc20 Simplistic REPL.
+2014-01-21 15:49:36 8b6493e Implement with statement.
+2014-01-21 16:36:15 7389d25 Fix typos.
+2014-01-21 21:13:00 8f58f61 Remove jsconf.h as it is not really useful.
+2014-01-21 21:25:08 6d2a4c7 Make jsY_error return void (as it is a noreturn function).
+2014-01-22 03:14:37 a6a5bd7 Add prefixes and remove duplicate functions.
+2014-01-22 03:52:28 14043f0 Implement unlabeled break and continue.
+2014-01-22 15:18:02 fdd94dc Break and continue to labelled statements.
+2014-01-22 15:18:02 424f716 Remove incorrect eval result hack.
+2014-01-22 16:24:45 f1e1171 Clean up stack and with/endwith balancing on abrupt exits.
+2014-01-22 18:03:29 833d2a6 Fix parser bug.
+2014-01-22 18:04:11 cf9867c Implement try/catch/finally exception handling.
+2014-01-22 21:15:28 bcc6631 Support empty expressions in for statements.
+2014-01-22 23:15:18 60253ce Add stack and scope balancing to exits from try/catch blocks.
+2014-01-22 23:31:55 4c326a5 Compile switch statements.
+2014-01-23 00:16:21 c55b4e1 Implement instanceof expression.
+2014-01-23 01:34:23 82a42ef Remove debug printf.
+2014-01-23 09:13:39 a654160 Make instanceof a public function.
+2014-01-23 10:07:22 0fd3f36 Add iterator object class for internal use in for-in loops.
+2014-01-23 17:08:17 6f4c214 Use 'emitraw' function to emit operands in preparation for eventual peephole optimisations.
+2014-01-23 17:08:59 4057217 Add 'string' operand versions of get/set/del property opcodes.
+2014-01-23 17:08:59 2b209d3 Omit needless setjmp guard over catch block in try/catch statement.
+2014-01-23 17:53:22 195816c Set property attributes on built-in objects and respect DontEnum.
+2014-01-23 23:04:59 7a45bb4 Free iterator nodes as they are being iterated over.
+2014-01-24 01:48:24 546ee1e Fix switch test-chain stack leftovers. Fix iterator on null and undefined.
+2014-01-24 01:48:24 d948459 Record whether a function is script or function code.
+2014-01-24 01:48:24 46f7268 Leave last evaluated expression on the stack for script code.
+2014-01-24 02:13:20 b22dc39 Use ES5 specification for implementation of Error.prototype.toString().
+2014-01-24 16:17:43 3cef860 Add a registry for stashing hidden javascript objects from C code.
+2014-01-24 16:18:55 4595872 Move non-standard 'gc' and 'print' global functions into main.c example.
+2014-01-24 17:11:49 90b54a9 Add userdata class.
+2014-01-24 19:04:04 1a7d3ea Refactor property get/set internals.
+2014-01-24 22:33:07 ac6cc9f Automagically update Array length property.
+2014-01-25 00:45:28 ff6f942 Add AA-tree node removal.
+2014-01-25 00:58:14 34b9fda Create special initializer opcodes for brevity.
+2014-01-25 01:14:02 2fd435e Push result of delete operator.
+2014-01-25 14:12:26 ecabfe4 Don't look for labels past function borders.
+2014-01-25 14:47:38 f52bbd8 Fix bug in case OP_INITPROP_N where we used the value as the key.
+2014-01-25 15:00:29 7159bcd Make sure to pop error object when we catch them at the top level dofile call.
+2014-01-25 15:45:43 8cb771c Print a better error message when trying to call a non-function.
+2014-01-25 17:40:37 f66986d Implement a smarter deletion of properties when resizing an array.
+2014-01-25 17:46:43 9103b4f Add 'own' argument to iterator.
+2014-01-25 17:51:57 4ee7ef8 Fix off-by-one error in String.fromCharCode().
+2014-01-25 18:21:01 c85c45e Create variables as DontDelete and DontEnum.
+2014-01-25 18:59:25 15fb409 Update LICENSE and AUTHORS
+2014-01-25 22:57:39 fac3f50 Add js_hasproperty function.
+2014-01-25 22:57:40 6fd45b8 Guard String.fromCharCode malloc with try/endtry.
+2014-01-25 22:57:40 cbdebfd Implement some Array functions.
+2014-01-27 12:12:19 489365d Add some more String functions.
+2014-01-27 13:08:24 b1c9926 Implement substring and slice.
+2014-01-27 17:59:36 ac953db Add more array functions.
+2014-01-28 00:43:32 de3aa34 Add Date class.
+2014-01-28 01:34:41 e8dfb4e Rename non-js utility sources to not have the 'js' prefix.
+2014-01-28 13:42:20 1aa1558 Let hasproperty push the value of the property on the stack if it exists.
+2014-01-28 13:58:19 8ade82b Maintain order of property enumeration by keeping a linked list.
+2014-01-28 14:38:17 3b3bf53 Array.sort() using insertion sort.
+2014-01-28 17:19:09 01cab63 Make the array has/get/setindex functions part of the public API.
+2014-01-28 17:19:09 8e10640 Add RegExp class (with no actual regex implementation hooked up).
+2014-01-28 23:31:19 c1fd029 Fix whitespace.
+2014-01-28 23:42:16 e4ab13f Fix clang scan-build warning.
+2014-01-30 15:47:31 63143d8 Change license to AGPL.
+2014-01-30 16:53:00 6c37f96 Use POSIX regcomp/regexec.
+2014-01-31 16:14:51 b7afd40 Add js_pushlstring to avoid a lot of try/malloc/pushstring boilerplate.
+2014-01-31 17:08:50 d949e16 String.replace()
+2014-02-04 15:05:03 96667d9 Use precedence table when pretty-printing syntax.
+2014-02-04 15:05:03 b749e23 String.split().
+2014-02-04 15:05:04 450a0ef Handle String.replace() when the search matches the empty string.
+2014-02-04 15:05:04 e645f59 Handle global flag in String.match().
+2014-02-04 15:30:16 241905d Add load() function to main.c
+2014-02-04 16:56:44 03b291f K&R style braces in pretty printer.
+2014-02-05 05:17:50 299d6c7 Fix typo in CR/LF handling in lexer.
+2014-02-05 05:18:25 7573f42 Abort main.c with return status if a script fails.
+2014-02-05 05:40:35 6ecb4e7 Calculate exponent the same way as fractions for symmetry in the lexer.
+2014-02-05 05:46:23 f0c7957 The typeof operator should return 'function' for callable objects.
+2014-02-05 06:00:51 f725c8c Fix bug in js_rot.
+2014-02-05 13:14:34 dd9217c Fix bug where do/while continue statement jumped to the wrong location.
+2014-02-05 13:22:41 f10f1f0 aoeu
+2014-02-05 13:37:28 9838735 Handle global flag in RexExp.exec() and .test().
+2014-02-05 13:57:44 e17dcbb Encapsulate all regexp state in js_Regexp struct.
+2014-02-05 14:05:51 9e6b197 Special case handling of regexp source, flags and lastIndex properties.
+2014-02-05 14:36:35 71afe58 Reset the lastIndex property in String.match() and replace().
+2014-02-05 16:47:36 591ea21 Check for value stack overflow.
+2014-02-06 13:39:13 ca3c7e4 Auto-generate the AST name list.
+2014-02-06 13:56:50 b659aa5 Compile ES5 getters and setters.
+2014-02-06 16:03:44 d35cef7 Implement getters and setters.
+2014-02-06 16:03:44 e65764e Rename DontDelete flag to DontConf.
+2014-02-06 16:03:44 f8871d0 Add functions to let C bindings define setters and getters. Also add js_currentfunction to allow C bindings to access properties defined on the currently executing function.
+2014-02-06 16:07:37 934c7a3 Check list of future reserved words for primary expression identifiers.
+2014-02-06 17:23:16 20a9d52 Use getter/setter also for properties used by the with statement.
+2014-02-06 18:19:07 bc6da35 Add decode/encode URI functions.
+2014-02-06 23:40:38 8e917e8 String.trim()
+2014-02-07 00:44:49 a09493e Implement ES5 prototype descriptor and misc object functions.
+2014-02-07 10:57:52 979c7bc Implement extensible object attribute.
+2014-02-07 11:44:39 d5b83c3 Implement Function constructor.
+2014-02-07 13:48:24 7b37ef2 Handle js_tostring on objects without toString or toValue methods.
+2014-02-07 14:24:45 411b8b5 Use length property of cfunctions to make sure we have at least N args.
+2014-02-07 15:21:14 22a7477 Implement ES5 array functions.
+2014-02-07 15:45:08 d59d0e2 Make argc/undefined checks more resilient.
+2014-02-07 16:40:22 b219aef Add virtual string array index properties for characters.
+2014-02-07 16:52:06 31acf85 Expose magic properties in Object.keys and Object.getOwnPropertyNames.
+2014-02-10 13:17:33 46dec71 Simplify string-buffer function API.
+2014-02-10 13:41:28 06e821d Quote strings properly in jsdump.
+2014-02-10 13:41:28 b8aa34d JSON skeleton.
+2014-02-10 13:41:28 39dd0a3 JSON.parse()
+2014-02-10 13:41:28 0ddbab5 Date.prototype.toJSON().
+2014-02-10 15:01:52 ab5236f UTF string index/pointer juggling.
+2014-02-10 15:44:40 e39e0bd Separate generic AST_IDENTIFIER and EXP_IDENTIFIER.
+2014-02-10 18:00:13 6886238 Implement lightweight functions.
+2014-02-10 18:54:52 e45115f Handle variable shadowing.
+2014-02-10 23:51:34 be3ed52 Some cleanups.
+2014-02-11 11:24:30 f4bb807 Fix eval() return value when no arguments are passed.
+2014-02-11 13:05:02 0edd102 JSON.stringify()
+2014-02-11 13:42:25 8e93872 Clean up for one.c compilation.
+2014-02-11 13:54:28 0d83e44 Add "jsone" makefile target.
+2014-02-11 14:25:33 722c02e Never compile scripts as lightweight functions.
+2014-02-11 14:28:01 56c5249 Revert "Handle js_tostring on objects without toString or toValue methods."
+2014-02-11 14:49:49 8ef83a3 Fix boolean equality tests.
+2014-02-11 14:57:56 7d698ae Compile pre/post increment/decrement as special opcodes.
+2014-02-11 15:26:29 60bde0a Improve jsV_stringtonumber.
+2014-02-11 16:54:17 c7335fa Prune unused UTF-8 and rune string functions.
+2014-02-11 17:08:38 91c0e06 Check in auto-generated headers for ease of building.
+2014-02-12 16:26:47 759d609 Fixes.
+2014-02-13 12:06:27 9f7141c Make array length helper public.
+2014-02-13 13:53:36 5b86924 Fix typo in ToBoolean.
+2014-02-14 10:49:07 ccf14d4 Fix bug in comment lexing.
+2014-02-18 14:38:50 5f3ea41 Rename jump to emitjump in compiler.
+2014-02-18 14:38:50 588fdd1 Small cleanups.
+2014-02-18 15:17:33 577585c Silence scan-build warnings about maybe uninitialized variables.
+2014-02-20 15:07:37 2ac601d Prepare for regular expression library.
+2014-02-21 16:30:01 8898715 Regular expression implementation.
+2014-02-21 18:32:35 d68a6f3 More robust BoL handling.
+2014-02-21 19:46:12 3585aba More robust character class parser.
+2014-02-24 12:03:59 2d28162 typeof X when X in not declared should return undefined rather than throw.
+2014-02-24 12:04:10 d50c934 Fix jsone build.
+2014-02-24 15:33:50 55ad332 Rename some regex opcodes.
+2014-02-24 16:21:32 d4f7b16 Fix lookahead captures.
+2014-02-24 22:44:59 ef891c5 Oops. Forgot to emit "setprop" for assignment operators.
+2014-02-24 23:55:58 c7e9ab0 Fix signed/unsigned comparison warnings.
+2014-02-25 00:21:47 fe723b6 Fix unreachable code warnings.
+2014-02-25 00:22:17 e4a6860 More signedness fixes.
+2014-02-25 00:56:33 70b0d8b Change C functions to not have a return value.
+2014-02-25 01:01:20 a98748a Use clang by default and enable more warnings.
+2014-02-25 01:23:52 45e3a31 Some -pedantic warning fixes.
+2014-02-25 13:40:24 11bcefd Don't recurse on second branch of "split" instruction.
+2014-02-25 13:44:53 e766ed7 Always open files in binary mode.
+2014-02-25 13:44:53 a42d36b Potential win32 MSVC compilation fixes.
+2014-02-25 20:08:16 c67ca52 Remove more dead code.
+2014-02-25 20:43:14 e7e1e0d Build on MSVC 2005.
+2014-02-26 14:03:16 fd0ff38 Remove -Werror.
+2014-02-26 15:01:13 697eee8 Use macro for magic number indicating an infinite number of repeats.
+2014-02-26 15:03:37 b60c1cc Use explicit backtracking stack rather than recursion.
+2014-02-26 15:06:22 fee803a Check for infinite loops matching the empty string at parse time.
+2014-02-26 15:30:46 7562052 Handle two-digit backreferences and captures.
+2014-02-26 15:58:02 32ac46d Fix relational equality with NaN.
+2014-02-26 16:00:23 90c2ba0 Nul-terminate strings created by toUpper/LowerCase.
+2014-02-26 17:35:18 01d85a4 Move nelem() macro into jsi.h
+2014-02-26 20:22:53 bfe5699 Improve Resub API.
+2014-02-27 13:11:03 9cb65f0 Check for invalid character escapes in regular expressions.
+2014-02-27 13:12:28 43384d9 Parse \0 and \x00 and \u0000 in regular expressions.
+2014-02-27 13:49:22 598de57 Fix ToNumber from strings and parseInt and parseFloat.
+2014-02-28 14:24:13 67b33c5 Handle malloc failure by throwing exceptions.
+2014-02-28 17:14:11 abd5967 Allow custom allocator.
+2014-02-28 17:14:11 7bac090 Tweak js_strtod.
+2014-02-28 20:21:31 b4223df Use gettimeofday/_ftime if available for more accurate times.
+2014-03-03 18:30:48 5b567dd Make date formatting and parsing re-entrant and libc independent.
+2014-03-03 19:14:35 5961e39 Fix fmod use with negative (pre-1970) times.
+2014-03-03 23:09:44 e4cafa6 Always use ISO 8601 formats for date string formatting.
+2014-03-03 23:54:26 9eb0a65 Improve date parsing.
+2014-03-04 00:24:00 d608b2f Check bounds of date elements in Date.parse().
+2014-03-06 21:21:06 35cc749 Fix regex.c test function printouts.
+2014-03-06 21:21:06 c87898e Implement Function.prototype.bind().
+2014-03-06 21:26:51 69cb649 Use array helper functions.
+2014-03-06 21:40:37 b24fe47 Handle NaN and Infinity in Number.toFixed and friends.
+2014-03-06 22:00:39 222ae80 Add user customisable panic function.
+2014-03-06 22:22:25 41693fa Add protected functions to load and call code.
+2014-03-06 22:26:47 44ddede Some tidying.
+2014-03-06 22:33:37 dc38647 Add and use js_touint16.
+2014-03-12 15:23:00 eed4030 Use strtod when lexing numbers.
+2014-03-12 15:23:00 46b9d8c Check that operand to 'in' is an object (no implicit conversion).
+2014-03-12 15:23:00 1c52e8b Fix semantics of x++: return ToNumber(x) rather than x.
+2014-03-12 16:40:48 d366e4b Don't pass argc to functions. Use js_gettop instead.
+2014-03-12 16:48:40 3e050a9 Rename libjs.c to one.c and commit it.
+2014-03-12 16:58:57 a6ba535 Makefile tweaks.
+2014-03-13 13:11:42 858d589 Handle empty arguments to Function constructor.
+2014-03-13 13:36:29 5dbd120 Fix several constructors.
+2014-03-13 14:23:30 d664d08 Fix compilation of -0.
+2014-03-13 14:40:55 4223434 Fix attributes of numeric constants.
+2014-03-13 14:41:14 8f87c0a Parse 0X1234 as hexadecimal numbers in ToNumber.
+2014-03-13 14:48:39 375c8a8 Use explicit MAX/MIN_VALUE constants.
+2014-03-18 15:38:35 83dd92f Add and use dtoa function from plan9/libfmt.
+2014-03-19 23:07:33 48aed4b Name the library: MuJS!
+2014-03-20 12:37:13 40d4dff Add debug, release and install targets.
+2014-03-20 12:37:26 546f033 Update README.
+2014-03-21 15:55:04 9e41aff Add signbit() implementation for MSVC.
+2014-03-26 13:09:53 89dc0c8 Fix warnings on Windows.
+2014-03-26 14:27:53 b37173e Silence "no return value"/"unreachable statement" warnings.
+2014-04-30 13:21:23 3094ffc Add "make tarball" rule to create release archives.
+2014-06-11 12:58:40 8f7c649 Move ToPrimitive hint flags into jsvalue.h
+2014-06-12 13:46:50 7bab97a Tweak argument order in js_is/touserdata.
+2014-07-19 18:42:30 e731478 Fix compilation problem on VS 2013
+2014-07-31 16:52:26 1f137b8 Improve MuJS interactive shell.
+2014-09-01 16:56:38 93cc058 Add portable strtod implementation.
+2014-09-22 15:47:04 bc845cb Optimize lexnumber when using strtod.
+2014-09-24 14:05:59 2e196dd Strip backslash from escaped / when lexing regular expressions.
+2014-09-24 16:02:04 aba272a Fix bug where some environment records were not marked by GC.
+2014-09-25 14:18:34 9512755 Use LDFLAGS when linking.
+2014-09-25 14:19:31 a381ba1 Change error message prefix to 'mujs:'.
+2014-10-09 15:08:02 8a659b2 Typedef instruction and check addresses and literals for overflow when emitting code.
+2014-10-09 15:18:26 15795e2 Allow unescaped / inside classes in regular expression tokens.
+2014-10-09 16:14:18 5ba75da Allow identity escapes in regular expressions.
+2014-10-13 16:33:52 8ab5024 Fix 'make test' target.
+2014-10-13 16:34:21 ee6c9c5 Optimize isalpha/digit macros in lexer.
+2014-10-13 16:34:35 46aca3b Fix return value of RegExp.prototype.exec()
+2014-10-15 13:12:45 43de5a0 Implement Math.round according to the (stupid) specification.
+2014-10-16 13:50:44 7901038 Add public property iterator function.
+2014-10-17 13:55:47 e107fcf Fix Math.abs to use fabs instead of int abs
+2014-10-17 13:55:47 a88e9d4 Fix Math.atan2 and Math.pow argument evaluation order
+2014-10-17 13:55:47 85d4c8a Fix Math.min and Math.max to accept zero args and handle -0
+2014-10-17 13:55:47 7d771cb Fix js_strtod to set the sign of -0 correctly
+2014-10-27 16:12:16 3fe6635 Differentiate between "global code" and "eval code" scripts.
+2014-10-28 12:21:04 45c62b0 Fix JSON parsing problems:
+2014-10-28 12:35:24 64cd586 Add static to some functions that should have it.
+2014-10-28 13:44:41 3f69364 JSON.stringify: support 'space' argument.
+2014-10-31 16:58:08 051d504 Add missing js_endtry call in Fp_toString.
+2014-11-01 13:03:40 a9e6b4c Fix bug in maintaining property enumeration list.
+2014-11-05 17:36:47 9ed0914 Fix bug in js_setlength when used for relative indices.
+2014-11-05 17:36:47 98744d0 Fix bug in Array.prototype.splice().
+2014-11-06 01:17:07 9ded251 Oops. Remove stray printf.
+2014-11-07 16:00:45 9f18165 Track array sparseness to be smarter in jsV_resizearray.
+2014-11-07 16:07:56 339abac Optimize js_stringtofloat to use integer conversion when possible.
+2014-11-10 12:19:22 4a7ffbf Fix bug in Math.random().
+2014-11-17 12:21:04 bc51de8 Use of try/catch must disqualify a function from being lightweight.
+2014-11-17 15:26:16 95e5aeb Remove duplicate js_newerror prototype.
+2014-11-17 15:31:14 6afabf4 Fix ifdef order to allow building jsdate on cygwin.
+2014-11-28 17:10:08 0cbd532 Garbage collect (some) strings.
+2014-11-29 12:39:57 7bb55ad Add js_itoa for faster conversion of unsigned int to string.
+2014-11-29 13:59:09 4eae3ec Make js_toprimitive (and by consequence js_tonumber/string/...) in-place.
+2014-11-29 16:01:36 6538308 Add short strings (with data embedded in js_Value).
+2014-11-29 16:12:30 84faaff Add user context pointer and flag argument to js_State constructor.
+2014-11-29 16:16:14 6fa0097 Silence GCC warning.
+2014-11-29 20:00:53 8c566e1 Fix bug in js_pushlstring.
+2014-12-02 16:01:22 5a48671 Clean up cassign[op] arguments.
+2014-12-03 01:18:21 031513b Add stack traces to error objects.
+2014-12-11 16:45:04 9bc5fec Fix makefile issues.
+2015-01-02 13:38:19 720aec8 Fix memory leak when freeing js_State.
+2015-01-02 13:39:11 0ac4cce Fix bound checks in jsdump.
+2015-01-02 13:43:57 b4fb126 Rename next/accept/expect macros in lexer and parser.
+2015-01-02 13:47:56 15ef29e Use memcpy instead of strcpy when copying short strings.
+2015-01-05 12:57:25 13c7d26 Deoptimize isalpha macro due to potential overflow errors.
+2015-01-05 13:03:30 5e3e9fd Check error for all fseek/ftell calls.
+2015-01-05 13:10:07 9b151f1 Fix test for empty string in String.prototype.split with regexp.
+2015-01-05 14:03:44 1a1d266 Annotate fall through switch cases.
+2015-01-05 17:09:46 3ceaeb1 Use manual loop instead of memcpy/strcpy when creating short strings.
+2015-01-05 17:32:09 9281c68 Use offsetof instead of hardcoded short string length.
+2015-01-05 19:38:18 c1edf58 Apply short string changes in jsvalue.c as well.
+2015-01-05 19:59:00 b005928 Add paranoid asserts to check js_Value struct layout and alignment.
+2015-01-08 15:18:19 cb6facd Remove redundant type checking in iterator opcode.
+2015-01-08 15:18:19 05c2ee9 Use last resort '[object]' ToPrimitive rather than throwing an error.
+2015-01-08 15:25:04 e673ae6 Clean up some error messages.
+2015-01-08 15:55:57 40dd4a2 Add eval op-code to implement proper 'this' binding for eval code.
+2015-01-14 13:04:15 c6d17c7 Add finalize callback to userdata objects.
+2015-01-14 13:04:46 8f790df Add strict mode flag to constructor.
+2015-01-14 13:05:12 e9f4ecc strict mode: No 'with' statements allowed.
+2015-01-14 13:05:12 ffa8de1 strict mode: eval code is evaluated in its own scope.
+2015-01-14 13:05:12 7bdfc5e strict mode: No arguments.callee property.
+2015-01-14 13:05:12 b51b05b strict mode: No automatic creation of global variables.
+2015-01-14 13:05:12 91dc20d strict mode: Errors on read-only and non-configurable properties.
+2015-01-14 13:05:12 543115b strict mode: Errors when extending non-extensible objects.
+2015-01-14 13:05:12 62c6e3f strict mode: No delete operator with an unqualified name.
+2015-01-14 13:05:12 63a542a strict mode: No duplicate formal parameters.
+2015-01-14 13:05:12 44c0e12 strict mode: Check duplicate property names.
+2015-01-14 13:05:12 d05415b strict mode: No redefining 'eval' or 'arguments'.
+2015-01-14 13:05:12 d9ed73f strict mode: 'this' is undefined for normal function calls.
+2015-02-02 17:27:07 c1ad1ba Fix mistake when compiling array literals.
+2015-08-14 12:05:09 eed7619 Rename our internal regex.h to not collide with system regex.h.
+2015-09-14 11:57:51 78ed7e6 Use fabs rather than integer abs for taking absolute value of floats.
+2015-09-14 12:00:07 17019d2 Rewrite parseInt to follow spec.
+2015-09-28 16:41:40 2699607 Rework try macros to simplify setjmp expression.
+2015-09-29 10:18:15 0827611 Add documentation.
+2015-12-16 11:49:52 0b9d3be Remove 'report' argument from js_dostring.
+2015-12-17 11:24:40 c1c637b Implement js_replace.
+2016-01-06 13:43:59 d800b59 Clean up stack on errors in js_pcall and js_pconstruct.
+2016-01-11 17:02:43 4e6c74b Add userdata has/put callbacks for custom properties.
+2016-01-12 16:42:40 f5b3d15 Make convenience stack manipulation functions public.
+2016-01-18 13:34:00 0fd82b6 Make js_try, js_savetry and js_endtry public functions/macros.
+2016-02-01 14:00:40 a462ed4 Don't use unsafe _snprintf on MSVC older than 2015.
+2016-02-05 16:43:46 7bbec41 Add callback example to docs to show how to use js_ref.
+2016-02-05 17:24:27 0b71921 Document js_try and js_endtry.
+2016-02-22 20:19:46 624f975 Set the internal length attribute for C constructors.
+2016-03-01 21:51:38 2db68ab Chain if-else statements in has/put/delproperty.
+2016-03-01 21:52:00 aba6644 Add delete callback to userdata objects.
+2016-04-15 12:18:34 c90c323 Fix bugs introduced when moving from argc to js_gettop.
+2016-04-19 15:36:41 4484271 Fix typo in parseInt: radix was limited to 2-32 but it should be 2-36.
+2016-04-27 15:54:52 7c7a9cd Oops! Forgot to use the allocator in a few places...
+2016-04-27 16:26:00 3e3c382 Avoid using 'unsigned int'.
+2016-04-28 12:40:52 5aed7d6 Fix bug in Function.prototype.bind().
+2016-04-28 12:48:09 4b68d52 Add js_iscoercible function.
+2016-04-28 12:57:22 a2fcfd6 Define built-in functions with the full name.
+2016-04-28 13:04:48 e4c77a7 Handle null/undefined argArray in Function.prototype.apply().
+2016-04-28 13:15:24 361b6ca Add CheckObjectCoercible in String prototype functions.
+2016-04-28 13:33:58 1b5cc3a Improve debugging stack trace print-out.
+2016-05-04 12:13:50 1930f35 Fix \s and \S ranges in regular expression.
+2016-06-01 15:23:43 c596dd5 Fix stack trace off-by-one error when skipping the top level entry.
+2016-06-10 15:19:28 066a067 Correct #ifdeffery for VS 2012
+2016-06-10 15:22:07 89793bb Fix Object.prototype.toString when called with null or undefined this.
+2016-06-23 13:54:20 9219eca Fix JSON formatting of strings with unicode characters.
+2016-07-04 15:19:08 a4158ae Fix call stack overflow triggering off-by-one too late.
+2016-09-09 19:56:35 805e0f0 Add js_newobjectx to create an object with a specific prototype object.
+2016-09-14 16:04:36 b3dece5 Make some static functions static inline.
+2016-09-20 17:19:56 f8234d8 Fix bug 697136.
+2016-09-20 17:19:56 a3a4fe8 Fix bug 697137: off by one in string length calculation.
+2016-09-21 15:21:04 8c805b4 Fix bug 697140: Overflow check in ascii division in strtod.
+2016-09-21 16:04:14 5000749 Fix bug 697141: buffer overrun in regexp string substitution.
+2016-09-21 16:04:14 5c337af Fix bug 697142: Stale string pointer stored in regexp object.
+2016-10-25 14:08:27 a5c747f Fix 697171: missed an operand in the bytecode debugger dump.
+2016-10-26 14:31:53 5008105 Fix 697172: degenerate labeled break/continue statement.
+2016-10-31 12:58:24 b6de34a Fix 697281: numeric overflow in regular expression repetition count.
+2016-10-31 13:05:37 a0ceaf5 Fix 697244: Check for incomplete escape sequence at end of input.
+2016-11-17 16:21:27 129dff4 Silence gcc 6 indentation warning.
+2016-12-02 14:58:17 fd003ec Fix 697381: check allocation when compiling regular expressions.
+2016-12-27 13:49:17 eafe794 Handle non-tty stdin more gracefully in example shell tool.
+2016-12-27 13:49:20 86feee5 Pacify valgrind: it doesn't know realloc(p, 0) is equivalent to free(p).
+2016-12-27 13:49:21 12a66c0 Fix printf format warnings.
+2017-01-12 14:47:01 77ab465 Fix 697401: Error when dropping extra arguments to lightweight functions.
+2017-01-12 15:30:42 fa3d30f Fix 697448: Limit the maximum program size to something reasonable.
+2017-01-13 16:23:09 0bb8f44 Update docs.
+2017-01-24 14:48:14 7318098 Add a simple example.
+2017-01-24 14:48:14 f32bcea Avoid C++ comments.
+2017-01-24 14:48:14 336097c Reimplement Math.round using floor().
+2017-01-24 14:50:22 7e00def Fix 697486: Workaround non-c99 compilers griping about trailing commas.
+2017-01-24 14:52:27 8f62ea1 Fix 697496: Check NAN before accessing array in MakeDay().
+2017-01-24 14:52:27 4006739 Fix 697497: Ensure array length is positive.
+2017-03-28 23:02:16 14b9aab Change to ISC license.
+2017-03-29 15:56:39 872cef5 Bug 697700: Fix typo and add more range checks in parseDateTime.
+2017-03-30 13:00:35 581412f Optimize regexp interpreter loop.
+2017-04-03 12:10:13 dbeda99 Fix JSON number parsing.
+2017-04-03 12:15:17 05aeef4 Use regular number to string conversion in JSON.stringify.
+2017-04-03 12:31:11 45208d7 Be stricter when parsing JSON strings.
+2017-04-04 16:02:30 aa18ef3 Update documentation to note our use of CESU-8 encoded strings.
+2017-04-17 14:55:12 9e9f168 Add strictness check when setting a property that only has a getter.
+2017-04-17 14:57:38 75cab70 Handle undefined this at the OP_THIS level.
+2017-04-17 23:27:00 8a26e20 Compile functions with per-function strictness.
+2017-04-17 23:27:00 1062e70 Track strictness during runtime based on 'use strict' pragma.
+2017-04-17 23:27:00 58b4420 Add function-level linking.
+2017-04-19 13:22:36 8e7d579 JSON.parse reviver callback.
+2017-04-19 16:14:26 e676a87 JSON.stringify replacer callback.
+2017-04-20 00:21:27 9321f8f Check for cyclic structures in JSON.stringify.
+2017-04-20 00:21:27 c1bd067 Don't truncate error messages.
+2017-04-20 14:56:53 2296f47 Make Error.prototype.toString conform to the spec.
+2017-04-20 15:12:12 50ee2a2 Update docs to mention we don't support zero valued chars in strings.
+2017-04-20 15:12:28 24b1997 Add setjmp.h to public header (since js_try is a macro over setjmp).
+2017-04-21 11:04:43 32bf345 Fix stack management error in JSON.stringify.
+2017-04-21 11:04:43 2e7550e Fix bounds checks for string object array accesses.
+2017-04-26 14:39:16 617261b Update docs with userdata callbacks.
+2017-05-09 13:52:11 44d4109 Use the line number of the lookahead token when building the syntax tree.
+2017-05-09 13:52:11 f18f2c0 Don't force 'this' to be the global object in js_dostring/dofile.
+2017-05-09 13:52:11 2b4d05a Revert 'Maintain order of property enumeration by keeping a linked list.'
+2017-05-09 14:47:19 134134e Don't do unprotected js_tostring calls in js_dostring/file.
+2017-05-12 11:42:06 d2c8e71 Fix public header so it can be used with C++.
+2017-05-12 14:28:06 50281c9 Update docs.
+2017-05-16 12:03:38 fb32b5c Add a js_setreport callback function to report warnings.
+2017-05-16 13:17:04 6a85c78 Fix error message when missing stack traces in main.c
+2017-05-16 13:17:04 0365576 Emit line numbers for each entry in compound literals.
+2017-05-16 13:25:00 5f83cc9 Add recursion overflow checks in parser.
+2017-05-22 15:54:47 bfebb7a Use grisu2 algorithm for locale independent dtoa. Use BSD strtod.
+2017-05-22 16:07:40 c5296bf Add sanitize build variant.
+2017-05-22 22:17:57 1399bbe Free script buffer read from standard input.
+2017-05-23 13:15:11 3f5f303 Fix grisu2 code to build on MSVC.
+2017-05-23 13:15:11 ebbc191 Add fast integer special case in jsV_numbertostring.
+2017-05-23 13:15:11 be0685e Optimize js_isarrayindex.
+2017-06-05 10:20:16 2dced7c Update docs website.
+2017-06-14 12:37:32 03c889d Update docs.
+2017-06-15 15:29:01 ca22ed4 Add pkgconfig file and shared library target.
+2017-06-15 16:22:58 a6e8443 Add separate install-static and install-shared targets.
+2017-06-16 13:02:33 f0ed0d0 Use separate directories for debug and release builds.
+2017-06-19 11:50:13 c893490 Silence a few compiler warnings for harmless, impossible cases.
+2017-06-21 13:46:29 4c53c27 Only strip linked binaries in release mode.
+2017-06-21 13:47:09 0a3fc12 Fix typo in js_strtod that affects parsing exponents.
+2017-07-05 02:45:15 e8dad5a Make js_freestate() not segfault on NULL argument.
+2017-07-05 13:31:12 a7aae8f Clamp to INT_MIN/INT_MAX explicitly in jsV_numbertointeger.
+2017-07-05 13:31:12 ae54eaa Move js_Buffer to jsi.h and fix some potential leaks.
+2017-07-05 13:37:40 4792d16 Fix 698191: don't call pexp with NULL expression in jsdump.c
+2017-07-20 16:44:40 fea0707 Support 'radix' argument for Number.prototype.toString.
+2017-08-08 12:28:20 bd75628 js_compile: Don't shadow formal arguments with function name.
+2017-08-09 16:03:47 9f0f88b Use <stdint.h> for VS2012
+2017-08-09 16:10:33 81388eb Add stdint.h MSVC workaround for jsnumber.c also.
+2017-08-15 14:08:55 557968a Reduce minimum stack use in regexec by using recursive implementation.
+2017-08-21 14:39:18 26af0ff Add official web site link to README.
+2017-09-07 14:31:27 5b0111d Add logo.
+2017-09-07 14:31:27 ffd25b0 Add download link.
+2017-09-07 14:31:27 991f5e7 Add 'make watch' target.
+2017-09-07 14:31:27 8c27b12 Fix leak in Function.prototype.toString.
+2017-09-19 13:47:28 919238c Update docs.
+2017-09-26 12:50:29 2f3d555 Use automatic length in "digits" array in Np_toString.
+2017-09-26 12:51:39 5d19049 Extract mujs version from directory name for releases.
+2017-09-26 14:37:56 ac9de3c Fix memory leak in main.
+2017-11-15 15:10:33 d63cf4a Throw a TypeError when converting an object without toString and valueOf.
+2017-11-15 15:24:19 41625ec Fix logo size in docs.
+2017-12-11 13:22:23 505751a Fix issue #55: Stack overflow bug in Array.prototype.sort().
+2017-12-11 14:15:01 2cb57c6 Fix issue #56: MacOS X not detected as a Unix for gettimeofday().
+2018-01-05 14:22:15 228719d Remove mention of broken web site.
+2018-01-15 13:08:31 849fb89 Add recursion overflow check when parsing unary expressions.
+2018-01-22 13:37:09 66cf4cc Fix issue #61: Silence misleading indentation warning.
+2018-01-23 16:19:29 e25c83d Fix issue #62: Handle 'this' binding consistently in REPL.
+2018-01-24 14:44:14 8df3dcd Add XCFLAGS to the CFLAGS in the Makefile.
+2018-01-24 16:27:16 4d45a96 Guard binary expressions from too much recursion.
+2018-01-24 16:55:49 25821e6 Fix 698920: Guard jsdtoa from integer overflow wreaking havoc.
+2018-04-23 18:24:31 d04cbf3 Add pretty-printing command line tool.
+2018-04-24 15:46:03 9d72b07 Don't forget to zero-terminate string buffer in Fp_toString.
+2018-04-26 13:30:13 57b698f Return null if String.prototype.match with a global regex finds no matches.
+2018-04-27 11:11:50 780b14b Fix bug in Ap_sort where tostring values were put back into the array.
+2018-04-27 16:59:35 b46ee8d Add more js_tryxxx conversion functions.
+2018-05-03 10:38:55 833f82c Fix issue #65: Uninitialized name in Function.prototype function.
+2018-05-03 10:45:34 22430de Fix creation of empty regular expressions.
+2018-05-08 13:15:39 b0e3f5e Add readline support to mujs shell.
+2018-05-15 13:22:04 caabe08 Use qsort to sort arrays.
+2018-05-15 13:51:24 cbdf814 Handle undefined and unset array slots separately in Array.prototype.sort.
+2018-05-29 14:29:16 34cb617 Fix 699383: Sorting arrays with zero or negative length.
+2018-06-08 13:51:10 3f6b06a Avoid type punning with unions.
+2018-06-08 13:52:12 2be672c Fix makefile to remove warning from 'ar' invocation.
+2018-06-15 15:05:38 ceac1b5 Allow enabling or disabling readline support by setting HAVE_READLINE.
+2018-06-15 15:22:54 222772f Remove -ffunction-sections and -fdata-sections compile flags.
+2018-07-03 12:00:57 49271d3 Add js_iserror function.
+2018-07-16 13:28:04 bd24708 Fix logic in Object.isFrozen to comply with spec.
+2018-07-19 12:21:43 dbc0931 Fix Date.prototype.setHours
+2018-07-23 11:30:22 40b7301 Fix 699549: Integer overflow in Array.prototype.sort().
+2018-07-25 12:00:33 b4297c0 Fix 699557: Pause garbage collector during Ap_sort.
+2018-07-26 23:44:15 5c1300b Fix 699559: Off-by-one comparison in regexp parser.
+2018-07-30 15:35:39 c86267d Fix issue 66: Stack overflow when compiling long regexp sequences.
+2018-08-27 12:59:00 3430d9a Return null instead of throwing an error when readline hits EOF.
+2018-08-29 13:01:04 643d428 Default mujs shell to non-strict mode.
+2018-09-03 15:30:30 2c0c6c9 Use getopt command line argument processing.
+2018-09-03 16:10:02 dcb3f03 Inherit strictness from invoking function in eval.
+2018-09-04 11:26:56 a2b62c0 Avoid clashing with system getopt.
+2018-09-04 11:27:34 84858c3 mujs shell: Make the load function behave like in the SpiderMonkey shell.
+2018-09-04 11:27:34 924649a mujs shell: Add compile function.
+2018-09-04 11:27:34 d4655ae Show system error message in js_loadfile.
+2018-09-11 12:47:31 7448a82 Fix gcc compiler warnings about switch fallthroughs.
+2018-10-26 14:57:56 81d5b30 Initialize random seed for Math.random().
+2018-11-05 16:00:13 245a6f9 Fix 700090, 700094, 700095: Iterate through lists in AST analysis passes.
+2018-11-26 10:40:22 fcf0e3e Tweak numeric overflow check in regexp count parser.
+2018-11-26 10:40:22 9344764 Make data tables in utftype.c const.
+2019-01-02 16:05:24 7f50591 Bug 700429: Limit size of input regular expression program.
+2019-01-04 10:58:30 7be32a0 Bug 700441: Handle null and undefined expressions in for-in statement.
+2019-01-07 13:28:22 bd9920c Handle null/undefined in OP_NEXTITER rather than creating empty iterator.
+2019-01-23 12:53:25 28643e6 Bug 697891: Parse all JSON string escapes.
+2019-02-08 15:25:35 5f55600 Fix bugs in Number.prototype.toFixed and toExponential.
+2019-02-12 12:19:26 9f40dfb Take DESTDIR into account when creating pkg-config file.
+2019-02-25 11:57:40 43c8445 Issue #84: Separate Makefile targets.
+2019-02-25 12:15:56 d3feec4 Issue #85: Use explicit seed in Math.random().
+2019-02-25 12:48:20 e471b4d Issue #83: Don't include $DESTDIR in pkg-config paths.
+2019-03-07 16:07:38 cd97fb4 Fix makefile install paths.
+2019-03-07 16:08:06 6a592ab Use emitarg instead of emitraw to emit opcode arguments.
+2019-03-07 16:08:06 914ae72 Improve line number tracking in parser.
+2019-03-07 18:35:51 cb1d50b Improve line number tracking in compiler.
+2019-03-08 10:57:32 ce02a9d Handle empty scripts.
+2019-03-08 12:55:21 8e57b47 Only emit line ops for actual exit handler statements.
+2019-03-08 14:09:10 2c24e19 Issue #92: Remove unimplemented function.
+2019-03-08 22:54:35 269904f Fix Makefile install derps
+2019-03-18 14:00:02 9f0153a Fix typo in ctypeof.
+2019-03-18 14:00:02 ed1c279 Fix indentation.
+2019-03-18 14:11:34 8b52b57 Allow js_newobjectx to take null as prototype.
+2019-03-18 14:11:34 5de1f97 Set appropriate internal class property of arguments object.
+2019-03-18 14:11:34 ffe0ca7 Issue 95: Improve error message when trying to call a non-callable.
+2019-03-22 14:00:20 603977a Add repr() function to shell, and use it in the REPL.
+2019-03-22 14:00:20 20d0fa0 Simplify opcodes: numbers and integer constants.
+2019-03-22 14:00:20 f5de9d4 Remove line opcode in favor of storing the line for each instruction.
+2019-03-22 14:00:20 bb65f18 Set 'lightweight' and 'arguments' during compile pass.
+2019-03-25 21:00:59 52c22be Fix MSVC compile errors.
+2019-03-29 19:40:44 0c03f9c Add missing break statement.
+2019-04-02 10:55:22 da632ca Bug 700938: Fix stack overflow in numtostr as used by Number#toFixed().
+2019-04-04 12:41:02 1e54790 Bug 700947: Add missing ENDTRY opcode in try/catch/finally byte code.
+2019-04-04 12:41:04 00d4606 Bug 700937: Limit recursion in regexp matcher.
+2019-04-05 18:36:26 b9e14e5 Revert "Pacify valgrind: it doesn't know realloc(p, 0) is equivalent to free(p)."
+2019-05-27 11:19:26 bd79071 Add make uninstall target.
+2019-06-11 15:48:39 eeea83a Issue 102: Workaround for address-sanitizer default realloc behavior.
+2019-06-11 15:48:39 e2b5920 Issue 105: Fix NULL dereferencing in regexp compiler.
+2019-06-12 17:23:46 14dc935 Issue 102: Fix ASAN build when using GCC.
+2019-07-03 20:25:19 16049bb Issue 107: Depend only on the exact files needed for install targets.
+2019-09-06 12:15:31 69b312d Fix coverity issue: memory corruption due to overlapping copy.
+2019-11-19 12:53:28 3d3f473 Bug 701887: Create arguments if eval is present.
+2019-11-19 12:56:22 6e62eb0 Issue 113: Add a js_delglobal function.
+2019-11-28 11:31:09 6b522a0 Issue 115: Fix compilation of small floating point numbers.
+2019-11-28 11:39:55 8c86834 Issue 114: Allow compile time limits to be configured.
+2020-01-02 12:42:09 b4484ab Issue 118: Add REG_ to limit defines, and use REG_MAXSUB in header.
+2020-01-02 12:42:09 e690d31 Issue 122: Allow floating point return values from Array.sort callback.
+2020-01-02 12:42:09 ddd1e5e Issue 126: accept String and Number objects as space parameter
+2020-01-02 12:42:09 d9f5556 Fix date setMonth and setUTCMonth processed wrong optional argument
+2020-01-02 14:22:00 457f87b Issue 128: Support property list as replacer argument in JSON.stringify.
+2020-01-02 14:30:43 c695b53 Issue 117: Skip first line if it starts with a shebang when loading files.
+2020-01-02 14:37:05 d022598 Update COPYING copyright year.
+2020-01-02 14:37:05 d248b0c Bug 701886: Always create new scope for eval().
+2020-01-10 11:09:22 8ee595b Bug 701355: Fix separate compilation issues that have crept in.
+2020-01-10 11:22:09 fe71080 Bug 698496: Handle leap years correctly in the Date constructor.
+2020-01-20 12:39:58 e082e6e Check for leading zero in js_isarrayindex that caused false positives.
+2020-01-23 12:06:06 6f93cab Fix enumerability of Error and Function properties.
+2020-01-23 12:06:06 11c894d Tweak default recursion limit.
+2020-02-19 10:24:33 e3f04e7 Check for empty string in js_isarrayindex.
+2020-03-17 13:11:18 fe63f4c Note that js_Report callback must not throw an exception.
+2020-03-17 13:11:18 8475290 Document the expected behavior of js_Put correctly.
+2020-03-17 14:10:18 8f12e04 Return "[object Iterator]" when running toString on an iterator value.
+2020-03-17 14:10:18 90aca80 Fix potential memory corruption when jsV_newmemstring fails to allocate.
+2020-05-27 12:32:32 8c5f2f2 Don't allow setting a property when the prototype's property is read-only.
+2020-05-27 12:32:32 331c5ec Issue 133: Eliminate recursion in GC scanning phase.
+2020-05-27 12:32:32 0261579 Support embedded 0 in strings by using modified UTF-8.
+2020-05-27 12:32:32 832e069 Support 4-byte UTF-8 sequences.
+2020-05-27 12:32:32 02bdafb Fix a number of typos.
+2020-05-27 17:07:41 ac25ac5 Fix typo in comment.
+2020-06-25 13:29:53 9f3e141 Fix typo in lexlinecomment where it did not detect EOF properly.
+2020-07-06 11:04:32 ad3817f Silence gcc warning about overflow.
+2020-07-06 11:04:32 ed33bc0 gc: fix incorrect free of some objects
+2020-07-23 12:40:09 c4c1524 gc: don't ignore property allocations count
+2020-07-23 12:40:09 b5eccea gc: use proportional instead of fixed threshold
+2020-08-24 14:27:39 6a9eede Fix type error in jsdate.js InLeapYear that led to bad calculations.
+2020-09-08 10:50:17 6871e5b Issue #141: Add missing end-of-string checks in regexp lexer.
+2021-01-12 14:54:50 a09d869 Bug 697702: Add workaround for MSVC not having unistd.h
+2021-01-25 14:38:15 789f30b Bug 703376: Don't allow creating new properties on transient objects.
+2021-01-25 17:53:29 d3a9900 Bug 703371: Add '-' to list of quoted escape characters in regex parser.
+2021-02-03 17:07:28 d11c710 Bug 703458: Handle NaN in Date accessors.
+2021-02-03 17:31:50 2eb4fd2 Bug 703459: Handle undefined argument to Error constructor.
+2021-02-03 17:44:23 ccf7fa6 Bug 703457: Fix typo in uriMark definition used by encodeURI(Component).
+2021-02-03 18:11:46 368fe83 Bug 703461: Escape '/' characters in regular expression source.
+2021-02-04 10:02:18 80e222d Support externally set CFLAGS, CPPFLAGS, and LDFLAGS.
+2021-03-04 12:08:42 9f34a07 Revert "Bug 701886: Always create new scope for eval()."
+2021-03-04 12:20:46 a34fdf2 Bug 701886: Don't redefine/reset existing vars in script code.
+2021-03-10 17:29:50 c9d05aa Bug 703675: RegExp.prototype should be a regular expression object.
+2021-03-10 18:10:34 364acef Bug 703670: Throw when redefining non-configurable/readonly properties.
+2021-03-23 12:47:49 94000c6 Fix crash when length is negative
+2021-03-24 15:35:39 7ebc570 regexp: Dump character class definitions in -DTEST build.
+2021-03-24 15:43:04 625542e fix split doesn't convert context to string if no argument is passed
+2021-03-25 14:43:07 1616c18 Some Makefile tweaks.
+2021-03-25 14:43:07 4c7f6be Issue #139: Parse integers with floats to support large numbers.
+2021-03-26 12:05:35 06a6f9f Issue #120: Optimize array construction bytecode.
+2021-03-26 14:35:14 33ffe6e Inline doubles and interned string pointers in the byte code.
+2021-03-26 15:47:35 3d29cd2 Issue #135: Expose type of value as an enum with js_type().
+2021-03-26 16:41:43 d1160c7 Improve gitignore.
+2021-03-26 16:41:43 72e95a4 Add user.make for persistent custom settings.
+2021-03-27 11:12:05 f93d245 Fix js_strtol
+2021-04-12 19:22:04 6d14043 Prevent negative table indexing in js_strtol
+2021-04-17 21:42:49 e00c9ba Don't call realloc with size=0 to free data.
+2021-04-19 12:57:43 857ffd3 tools: add test262 and harness
+2021-04-20 00:14:17 d5f6b3b test262: remove incorrect shift
+2021-04-20 00:14:17 292415b test262: improve quoting, handle spaces at files/arguments
+2021-04-21 12:25:48 833b6f1 Issue #148: Check for overflow when reading floating point exponent.
+2021-04-21 15:07:16 e38bff1 ... and leave a bit of margin.
+2021-04-23 11:13:50 dbb86fc Call "join" property instead of hardcoding Ap_join in Ap_toString.
+2021-04-23 11:13:50 7ef066a Fix use-after-free in regexp source property access.
+2021-06-03 12:45:04 6625d1e Disable const warnings in Visual Studio.
+2021-06-08 13:41:51 c3715ce Fix error in Array.prototype.toString().
+2021-07-08 18:13:12 c3ce563 Debug print whether a function is strict.
+2021-07-08 18:13:35 d4a599e Issue 150: Fix regexp.exec bugs.
+2021-07-20 11:24:40 1b8aae1 Restore missing copyright headers!
+2021-07-20 15:01:53 2a1804e Generate new tables for isalpha/toupper/tolower from UnicodeDate.txt
+2021-07-23 11:42:35 a9d88e5 Handle try stack errors like stack overflow errors.
+2021-07-23 12:43:15 8220615 Fix leaks if js_try runs out of exception stack space.
+2021-07-23 16:23:08 9dd965b Add special error handling for safe 'protected' functions.
+2021-08-01 13:58:34 453d28f Don't use realloc(p, 0) to mean free() in default regex allocator.
+2021-09-07 18:02:28 b06a5e9 Bug 704238: Limit max string lengths.
+2021-09-20 14:08:39 daa2241 Increase default string limit to 256M.
+2021-11-04 13:08:51 fe8cac6 Add user data to C functions with extended constructor.
+2021-11-05 12:59:02 3bd234c Math.random: Use Lehmer LCG instead of borrowing the hack from musl.
+2021-11-05 12:59:02 e7ba876 Silence harmless GCC warnings.
+2021-11-05 12:59:02 90a6342 Issue #152: Work around GCC compiler bug introduced in 2015.
+2021-12-06 11:48:32 df8559e Bug 704749: Clear jump list after patching jump addresses.
+2021-12-06 11:58:41 70a299c Build shared libs as dylib on macOS
+2021-12-06 15:42:08 eed8a67 Bug 704750 and 704751: Save transient js_toobject in stack slot.
+2021-12-06 16:40:44 78e56b7 Bug 704748: Save original object in stack slot for returning after constructor.
+2021-12-06 16:41:36 70bd7ea Minor cleanups.
+2021-12-08 12:56:12 1780d0e Bug 704756: Don't trust function.length property!
+2021-12-08 12:56:12 dd0a097 Add JS_VERSION_MAJOR/MINOR/PATCH defines to mujs.h
+2022-02-16 12:31:25 a2b628c array join: avoid strcat, speedup from O(N^2) to O(N)
+2022-02-23 14:58:49 4586e81 Some minor optimizations to Ap_join.
+2022-03-10 17:42:00 434ae67 Issue #156: Fix check for duplicate formal parameters when strict.
+2022-03-10 17:42:25 76e400f Add "console" object to mujs shell.
+2022-03-16 11:34:18 db110ea Bug 705052: Don't use private STACK/TOP macros in jsstate.c
+2022-05-17 15:32:16 160ae29 Issue #162: Check stack overflow during regexp compilation.
+2022-05-17 15:53:30 910acc8 Issue #161: Don't fclose a FILE that is NULL.
+2022-05-17 15:57:55 f5b3c70 Issue #161: Cope with empty programs in mujs-pp.
+2022-05-25 16:33:53 88f6d86 Add js_isbooleanobject and js_isdateobject functions.
+2022-06-09 15:53:51 3451b6c Guard state initialization with try to avoid panic in initialization.
+2022-08-05 13:13:21 1cbf19e Makefile: fix parallel builds
+2022-08-23 11:16:42 ac03b95 Bug 705775: Fix double fclose in pretty-printing tool.
+2022-09-08 13:54:14 3f71a1c Fast path for "simple" arrays.
+2022-10-11 18:09:38 bbb2c51 Avoid freeing buffer twice in case of error.
+2022-10-11 18:18:55 ebf235b Bump version number.
+2022-10-17 14:52:13 4d3165b Bug 705905: Compute VERSION using Make.
+2022-10-17 14:53:27 1138515 Use $(@D) instead of $(dir $@)
+2022-10-17 14:53:27 d592c78 Enable choice of library version for shell
+2022-10-20 18:14:54 8b5ba20 Issue #166: Use special iterator for string and array indices.
+2022-10-20 18:19:41 69e2767 Make a patch release for important iterator bug fix.
+2022-10-26 20:42:29 bf4ac94 Set length of output array Array.prototype.map.
+2022-11-07 13:44:24 edb50ad Bug 706057: Fix use-after-free in getOwnPropertyDescriptor.
+2022-11-07 16:24:56 0e611cd 1.3.2 patch release for UAF bug fix.
+2022-11-07 16:25:09 c067e12 Avoid using the string interning table.
+2022-11-07 16:25:09 66d98a5 Fix Array.prototype.slice when deleteCount is missing.
+2022-11-09 16:01:43 f882c6c Rename private functions to avoid problems with MSYS stdio.h.
+2022-11-14 17:43:58 09b3fcb Bug 706075: Fix errors in property deletion.
+2022-11-16 21:12:23 bd037ab Bug 706081: Fix off by one in size calculation.
+2023-01-04 17:28:23 7d9888b Return "undefined" from C functions if no return value is pushed.
+2023-01-04 17:28:23 88b31f3 Allow holes at the end of a simple array.
+2023-01-04 17:29:22 71ffe07 Fix longjmp warnings.
+2023-01-04 17:29:22 278590f Merge the small private header files into jsi.h
+2023-01-04 17:29:22 d283465 Regenerate Unicode data from latest UnicodeData.txt
+2023-01-05 15:32:41 dd149b9 Split debug printing of bytecode etc into "pp" tool.
+2023-01-05 15:32:41 2e2738b Change js_Value to union to avoid some compiler optimization warnings.
+2023-01-05 15:48:28 32f3e71 Issue #171: Fix Object.keys implementation for flat arrays and strings.
+2023-01-09 14:44:02 bb6a85a Issue #171: Compile sparse array initializers correctly.
+2023-01-09 16:09:28 f190f88 Simplify Makefile.

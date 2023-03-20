@@ -1,0 +1,9 @@
+{
+	"files.associations": {
+		"*.json": "json",
+		"utfdata.h": "c",
+		"random": "c",
+		"stddef.h": "c",
+		"stdlib.h": "c"
+	}
+}
