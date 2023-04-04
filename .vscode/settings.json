@@ -4,6 +4,9 @@
 		"utfdata.h": "c",
 		"random": "c",
 		"stddef.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"uv.h": "c",
+		"curl.h": "c",
+		"stdio.h": "c"
 	}
 }

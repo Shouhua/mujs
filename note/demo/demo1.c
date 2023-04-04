@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../mujs.h"
+#include "mujs.h"
 
 static void jsB_print(js_State *J)
 {
@@ -24,6 +24,7 @@ int main (int argc, char *argv[]) {
 	js_dostring(J, "function hello(greet){debugger;print('helo, ', greet);};hello('world')");
 
 	js_freestate(J);
-
+	int a;
+	scanf("%d", &a);
 	return 0;
 }

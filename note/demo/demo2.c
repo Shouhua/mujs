@@ -3,7 +3,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "../mujs.h"
+#include "mujs.h"
 
 static void jsB_print(js_State *J)
 {

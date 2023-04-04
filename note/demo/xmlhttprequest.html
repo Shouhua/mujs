@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>XMLHttpRequest async & sync</title>
+</head>
+<body>
+	<h1 id="async"></h1>
+	<h2>"https://jsonplaceholder.typicode.com/todos/1" JSON result:</h2> 	
+	<div id="result"></div>
+	<script type="module">
+		console.log("before")
+		var url = "https://jsonplaceholder.typicode.com/todos/1"
+		var xhr = new XMLHttpRequest()
+		var isAsync = true
+		xhr.open("GET", url, isAsync)
+		xhr.onload = function() {
+			if(xhr.readyState === 4) {
+				if(xhr.status === 200) {
+					console.log('xhr status is 200')
+					document.getElementById('async').textContent = isAsync ? '异步' : '同步'
+					document.getElementById('result').textContent = xhr.response
+				} else {
+					console.log('xhr status not 200')
+				}
+			}
+		}
+		xhr.send()
+		console.log("after")
+	</script>
+</body>
+</html>
