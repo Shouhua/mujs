@@ -50,7 +50,7 @@ typedef struct _SockInfo
   GlobalInfo *global;
 } SockInfo;
  
-#define mycase(code) \ 
+#define mycase(code) \
   case code: s = __STRING(code)
  
 /* Die if we get a bad CURLMcode somewhere */
@@ -338,7 +338,7 @@ static int init_fifo(GlobalInfo *g)
  
   fprintf(MSG_OUT, "Creating named pipe \"%s\"\n", fifo);
   if(lstat (fifo, &st) == 0) {
-    if((st.st_mode & S_IFMT) == S_IFREG) {
+    if(S_ISREG(st.st_mode)) {
       errno = EEXIST;
       perror("lstat");
       exit(1);
