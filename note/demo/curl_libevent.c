@@ -35,7 +35,6 @@ typedef struct curl_socket_s
 {
     struct event *event;
     curl_socket_t sockfd;
-    global_t *global;
 } curl_socket_ctx;
 
 typedef void (*curl_done_cb)(CURLMsg *message, void *arg);

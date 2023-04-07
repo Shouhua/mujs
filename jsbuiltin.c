@@ -201,6 +201,8 @@ void jsB_init(js_State *J)
 	J->String_prototype = jsV_newobject(J, JS_CSTRING, J->Object_prototype);
 	J->Date_prototype = jsV_newobject(J, JS_CDATE, J->Object_prototype);
 
+	J->Xhr_prototype = jsV_newobject(J, JS_CXHR, J->Object_prototype);
+
 	J->RegExp_prototype = jsV_newobject(J, JS_CREGEXP, J->Object_prototype);
 	J->RegExp_prototype->u.r.prog = js_regcompx(J->alloc, J->actx, "(?:)", 0, NULL);
 	J->RegExp_prototype->u.r.source = js_strdup(J, "(?:)");
@@ -228,6 +230,7 @@ void jsB_init(js_State *J)
 	jsB_initjson(J);
 
 	jsB_inittimer(J);
+	jsB_initxhr(J);
 
 	/* Initialize the global object */
 	js_pushnumber(J, NAN);

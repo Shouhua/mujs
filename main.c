@@ -314,6 +314,7 @@ main(int argc, char **argv)
 		}
 	}
 
+	curl_global_init(CURL_GLOBAL_ALL);
 	loop->base = event_base_new();
 	loop->timer_list = NULL;
 

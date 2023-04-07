@@ -14,6 +14,7 @@
 #include <limits.h>
 
 #include <event2/event.h>
+#include <curl/curl.h>
 
 /* NOTE: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103052 */
 #ifdef __GNUC__
@@ -236,6 +237,8 @@ struct js_State
 	js_Object *RegExp_prototype;
 	js_Object *Date_prototype;
 
+	js_Object *Xhr_prototype;
+
 	js_Object *Error_prototype;
 	js_Object *EvalError_prototype;
 	js_Object *RangeError_prototype;
@@ -322,6 +325,7 @@ enum js_Class {
 	JS_CARGUMENTS,
 	JS_CITERATOR,
 	JS_CUSERDATA,
+	JS_CXHR,
 };
 
 /*
@@ -442,7 +446,57 @@ struct js_Environment
 	int gcmark;
 };
 
+/* jsxmr.c */
+enum {
+    XHR_RSTATE_UNSENT = 0,
+    XHR_RSTATE_OPENED,
+    XHR_RSTATE_HEADERS_RECEIVED,
+    XHR_RSTATE_LOADING,
+    XHR_RSTATE_DONE,
+};
+enum {
+    XHR_EVENT_ABORT = 0,
+    XHR_EVENT_ERROR,
+    XHR_EVENT_LOAD,
+    XHR_EVENT_LOAD_END,
+    XHR_EVENT_LOAD_START,
+    XHR_EVENT_PROGRESS,
+    XHR_EVENT_READY_STATE_CHANGED,
+    XHR_EVENT_TIMEOUT,
+    XHR_EVENT_MAX,
+};
+enum {
+    XHR_RTYPE_DEFAULT = 0,
+    XHR_RTYPE_TEXT,
+    XHR_RTYPE_ARRAY_BUFFER,
+    XHR_RTYPE_JSON,
+};
 
+typedef struct curl_socket_s
+{
+    struct event *event;
+    curl_socket_t sockfd;
+} curl_socket_ctx;
+
+typedef void (*curl_done_cb)(CURLMsg *message, void *arg);
+typedef char content_t;
+typedef struct
+{
+	char *method;
+    char *url; // 使用strdup，需要free，见destroy_req_ctx
+	int async;
+
+    content_t *hbuf; // header content buffer
+    size_t hlen;
+    content_t *bbuf; // body content buffer
+    size_t blen;
+    curl_done_cb done_cb;
+    CURL *handle; // curl easy handle
+    unsigned short ready_state; // xhr ready_state
+	js_Value events[XHR_EVENT_MAX];
+} req_ctx;
+
+/* jstimer.c */
 typedef struct timer_ctx_s
 {
 	js_State *J;
@@ -458,6 +512,8 @@ typedef struct timer_ctx_s
 typedef struct {
 	struct event_base *base;
 	timer_ctx *timer_list;
+	CURLM *curlm_handle;
+	struct event *curlm_timeout;
 } js_Loop;
 
 /* jsrun.c */
@@ -878,6 +934,7 @@ void jsB_initjson(js_State *J);
 void jsB_initdate(js_State *J);
 
 void jsB_inittimer(js_State *J);
+void jsB_initxhr(js_State *J);
 
 void jsB_propf(js_State *J, const char *name, js_CFunction cfun, int n);
 void jsB_propn(js_State *J, const char *name, double number);

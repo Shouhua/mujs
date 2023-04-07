@@ -24,3 +24,4 @@
 #include "regexp.c"
 #include "utf.c"
 #include "jstimer.c"
+#include "jsxhr.c"

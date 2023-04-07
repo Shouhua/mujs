@@ -209,6 +209,7 @@ static void reprvalue(js_State *J, js_Buffer **sb)
 				js_puts(J, sb, "))");
 			}
 			break;
+		// TODO XMLHttpRequest
 		case JS_CERROR:
 			js_puts(J, sb, "(new ");
 			js_getproperty(J, -1, "name");

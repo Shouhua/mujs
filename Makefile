@@ -5,7 +5,7 @@
 default: build/debug/mujs build/debug/mujs-pp
 
 CFLAGS = -std=c99 -pedantic -Wall -Wextra -Wno-unused-parameter
-CLIBS := -levent
+CLIBS := -levent -lcurl
 
 OPTIM = -O3
 
@@ -58,7 +58,8 @@ SRCS = \
 	jsvalue.c \
 	regexp.c \
 	utf.c \
-	jstimer.c
+	jstimer.c \
+	jsxhr.c
 
 one.c:
 	for F in $(SRCS); do echo "#include \"$$F\""; done > $@
