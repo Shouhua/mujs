@@ -13,6 +13,8 @@
 #include <float.h>
 #include <limits.h>
 
+#include <event2/event.h>
+
 /* NOTE: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103052 */
 #ifdef __GNUC__
 #if (__GNUC__ >= 6)
@@ -440,6 +442,24 @@ struct js_Environment
 	int gcmark;
 };
 
+
+typedef struct timer_ctx_s
+{
+	js_State *J;
+	struct event_base *base;
+	struct event *ev;
+	size_t id;
+	js_Value *func;
+	size_t argc;
+	js_Value *argv;
+	struct timer_ctx_s *timer_next;
+} timer_ctx;
+
+typedef struct {
+	struct event_base *base;
+	timer_ctx *timer_list;
+} js_Loop;
+
 /* jsrun.c */
 js_Environment *jsR_newenvironment(js_State *J, js_Object *variables, js_Environment *outer);
 js_String *jsV_newmemstring(js_State *J, const char *s, int n);
@@ -856,6 +876,8 @@ void jsB_initerror(js_State *J);
 void jsB_initmath(js_State *J);
 void jsB_initjson(js_State *J);
 void jsB_initdate(js_State *J);
+
+void jsB_inittimer(js_State *J);
 
 void jsB_propf(js_State *J, const char *name, js_CFunction cfun, int n);
 void jsB_propn(js_State *J, const char *name, double number);

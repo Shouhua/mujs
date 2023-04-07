@@ -5,6 +5,7 @@
 default: build/debug/mujs build/debug/mujs-pp
 
 CFLAGS = -std=c99 -pedantic -Wall -Wextra -Wno-unused-parameter
+CLIBS := -levent
 
 OPTIM = -O3
 
@@ -56,7 +57,8 @@ SRCS = \
 	jsstring.c \
 	jsvalue.c \
 	regexp.c \
-	utf.c
+	utf.c \
+	jstimer.c
 
 one.c:
 	for F in $(SRCS); do echo "#include \"$$F\""; done > $@
@@ -75,33 +77,33 @@ utfdata.h: genucd.py UnicodeData.txt
 
 build/sanitize/mujs: main.c one.c $(SRCS) $(HDRS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -g -fsanitize=address -fno-omit-frame-pointer -o $@ main.c one.c -lm -DHAVE_READLINE -lreadline
+	$(CC) $(CFLAGS) -g -fsanitize=address -fno-omit-frame-pointer -o $@ main.c one.c -lm -DHAVE_READLINE -lreadline $(CLIBS)
 
 build/debug/libmujs.$(SO): one.c $(SRCS) $(HDRS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -g -fPIC -shared -o $@ one.c -lm
+	$(CC) $(CFLAGS) -g -fPIC -shared -o $@ one.c -lm $(CLIBS)
 build/debug/libmujs.o: one.c $(SRCS) $(HDRS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -g -c -o $@ one.c
 build/debug/libmujs.a: build/debug/libmujs.o
 	$(AR) cr $@ $^
 build/debug/mujs: main.c build/debug/libmujs.o
-	$(CC) $(CFLAGS) -g -o $@ $^ -lm -DHAVE_READLINE -lreadline
+	$(CC) $(CFLAGS) -g -o $@ $^ -lm -DHAVE_READLINE -lreadline $(CLIBS)
 build/debug/mujs-pp: pp.c build/debug/libmujs.o
-	$(CC) $(CFLAGS) -g -o $@ $^ -lm
+	$(CC) $(CFLAGS) -g -o $@ $^ -lm $(CLIBS)
 
 build/release/libmujs.$(SO): one.c $(SRCS) $(HDRS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $(OPTIM) -fPIC -shared -o $@ one.c -lm
+	$(CC) $(CFLAGS) $(OPTIM) -fPIC -shared -o $@ one.c -lm $(CLIBS)
 build/release/libmujs.o: one.c $(SRCS) $(HDRS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(OPTIM) -c -o $@ one.c
 build/release/libmujs.a: build/release/libmujs.o
 	$(AR) cr $@ $^
 build/release/mujs: main.c build/release/libmujs.o
-	$(CC) $(CFLAGS) $(OPTIM) -o $@ $^ -lm -DHAVE_READLINE -lreadline
+	$(CC) $(CFLAGS) $(OPTIM) -o $@ $^ -lm -DHAVE_READLINE -lreadline $(CLIBS)
 build/release/mujs-pp: pp.c build/release/libmujs.o
-	$(CC) $(CFLAGS) $(OPTIM) -o $@ $^ -lm
+	$(CC) $(CFLAGS) $(OPTIM) -o $@ $^ -lm $(CLIBS)
 
 build/release/mujs.pc:
 	@mkdir -p $(@D)
@@ -110,7 +112,7 @@ build/release/mujs.pc:
 	echo >> $@ Version: $(VERSION)
 	echo >> $@ Cflags: -I$(incdir)
 	echo >> $@ Libs: -L$(libdir) -lmujs
-	echo >> $@ Libs.private: -lm
+	echo >> $@ Libs.private: -lm $(CLIBS)
 
 install-common: build/release/mujs build/release/mujs-pp build/release/mujs.pc
 	install -d $(DESTDIR)$(incdir)
@@ -147,6 +149,7 @@ tags: $(SRCS) $(HDRS) main.c pp.c
 
 clean:
 	rm -rf build
+	rm one.c
 
 nuke: clean
 	rm -f one.c astnames.h opnames.h

@@ -10,6 +10,9 @@
 
 #include "mujs.h"
 
+#include <event2/event.h>
+#include "jsi.h"
+
 static char *xoptarg; /* Global argument pointer. */
 static int xoptind = 0; /* Global argv index. */
 static int xgetopt(int argc, char *argv[], char *optstring)
@@ -301,6 +304,7 @@ main(int argc, char **argv)
 	int strict = 0;
 	int interactive = 0;
 	int i, c;
+	js_Loop *loop = malloc(sizeof(js_Loop));
 
 	while ((c = xgetopt(argc, argv, "is")) != -1) {
 		switch (c) {
@@ -310,11 +314,16 @@ main(int argc, char **argv)
 		}
 	}
 
+	loop->base = event_base_new();
+	loop->timer_list = NULL;
+
 	J = js_newstate(NULL, NULL, strict ? JS_STRICT : 0);
 	if (!J) {
 		fprintf(stderr, "Could not initialize MuJS.\n");
 		exit(1);
 	}
+
+	js_setcontext(J, loop);
 
 	js_newcfunction(J, jsB_gc, "gc", 0);
 	js_setglobal(J, "gc");
@@ -387,8 +396,13 @@ main(int argc, char **argv)
 		}
 	}
 
+	event_base_dispatch(loop->base);
+
 	js_gc(J, 0);
 	js_freestate(J);
+
+	event_base_free(loop->base);
+	libevent_global_shutdown();
 
 	return status;
 }
