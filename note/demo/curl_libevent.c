@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 #define MSG_OUT stdout
+#define CONTENT_LENGTH 1024*1024
 
 enum {
     XHR_RSTATE_UNSENT = 0,
@@ -94,10 +95,12 @@ static void destroy_req_ctx(req_ctx_t *ctx)
 static void add_download(const char *url, global_t *g)
 {
     req_ctx_t *ctx = malloc(sizeof(req_ctx_t));
-    ctx->hbuf = malloc(sizeof(content_t) * 1024);
-    memset(ctx->hbuf, 0, 1024);
-    ctx->bbuf = malloc(sizeof(content_t) * 1024);
-    memset(ctx->bbuf, 0, 1024);
+    ctx->hbuf = calloc(1, sizeof(content_t)*CONTENT_LENGTH);
+    ctx->bbuf = calloc(1, sizeof(content_t)*CONTENT_LENGTH);
+    // ctx->hbuf = malloc(sizeof(content_t) * 1024);
+    // memset(ctx->hbuf, 0, 1024);
+    // ctx->bbuf = malloc(sizeof(content_t) * 1024);
+    // memset(ctx->bbuf, 0, 1024);
     ctx->hlen = ctx->blen = 0;
     ctx->done_cb = request_done_cb;
     ctx->url = strdup(url);
@@ -187,14 +190,14 @@ static int init_fifo(global_t *g)
 
 static size_t header_cb(char *ptr, size_t size, size_t nmemb, void *data) 
 {
-    const char status_line[] = "HTTP/";
+    // const char status_line[] = "HTTP/";
     const char empty_line[] = "\r\n";
     size_t real_len = size * nmemb;
     req_ctx_t *ctx = (req_ctx_t *)data;
-    if(strncmp(status_line, ptr, sizeof(status_line) - 1) == 0) // 第一行HTTP/2.0 OK
-    {
-    }
-    else if(strncmp(empty_line, ptr, sizeof(empty_line) - 1) == 0) // header结束了
+    // if(strncmp(status_line, ptr, sizeof(status_line) - 1) == 0) // 第一行HTTP/2.0 OK
+    // {
+    // }
+    if(strncmp(empty_line, ptr, sizeof(empty_line) - 1) == 0) // header结束了
     {
         ctx->ready_state = XHR_RSTATE_HEADERS_RECEIVED;
         *(ctx->hbuf+ctx->hlen-2) = '\0';
@@ -211,10 +214,11 @@ static size_t header_cb(char *ptr, size_t size, size_t nmemb, void *data)
             }
         }
     }
-    if((ctx->hlen + real_len) < 1024)
+    if((ctx->hlen + real_len) > CONTENT_LENGTH)
     {
-        memcpy(ctx->hbuf+ctx->hlen, (content_t *)ptr, real_len);
+        ctx->hbuf = realloc(ctx->hbuf, ctx->hlen + real_len);
     }
+    memcpy(ctx->hbuf+ctx->hlen, (content_t *)ptr, real_len);
     ctx->hlen += real_len;
     return real_len;
 }
@@ -227,11 +231,11 @@ static size_t write_cb(void *ptr, size_t size, size_t nmemb, void *data)
     {
         ctx->ready_state = XHR_RSTATE_LOADING;
     }
-    if((ctx->blen + real_len) < 1024)
+    if((ctx->blen + real_len) > CONTENT_LENGTH)
     {
-        memcpy(ctx->bbuf+ctx->blen, (content_t *)ptr, real_len);
-        // *(ctx->bbuf+real_len) = '\0';
+        ctx->bbuf = realloc(ctx->bbuf, ctx->blen + real_len);
     }
+    memcpy(ctx->bbuf+ctx->blen, (content_t *)ptr, real_len);
     ctx->blen += real_len;
     return real_len;
 }

@@ -254,16 +254,6 @@ static void request_done_cb(CURLMsg *message, void *arg)
     printf("%s\n", ctx->bbuf);
 }
 
-static void destroy_req_ctx(req_ctx *ctx)
-{
-    free(ctx->bbuf);
-    free(ctx->hbuf);
-    free(ctx->url);
-    ctx->done_cb = NULL;
-    ctx->handle = NULL;
-    free(ctx);
-}
-
 static req_ctx * register_request(const char *method, 
 	const char *url,
 	int async,
@@ -347,7 +337,7 @@ static void Xp_send(js_State *J)
 	// 如何获取当前curl easy handle
 	// if not async use curl easy handle
 	// if async curl multi handle add easy handle
-	curl_multi_add_handle(g->curlm_handle, easy_handle);
+	// curl_multi_add_handle(g->curlm_handle, easy_handle);
 }
 
 void jsB_initxhr(js_State *J)
