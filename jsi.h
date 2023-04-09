@@ -492,8 +492,9 @@ typedef struct
     size_t blen;
     curl_done_cb done_cb;
     CURL *handle; // curl easy handle
+	CURLM *curlm_handle;
     unsigned short ready_state; // xhr ready_state
-	js_Value events[XHR_EVENT_MAX];
+	js_Object *events[XHR_EVENT_MAX];
 } req_ctx;
 
 /* jstimer.c */

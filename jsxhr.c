@@ -274,10 +274,10 @@ static req_ctx * register_request(const char *method,
     CURL *handle = curl_easy_init();
     ctx->handle = handle;
     ctx->ready_state = XHR_RSTATE_UNSENT;
+    ctx->curlm_handle = g->curlm_handle;
 	for(int i = 0; i<XHR_EVENT_MAX; i++)
 	{
-		// ctx->events[i] = ;
-		// TODO
+		ctx->events[i] = NULL;
 	}
 
     curl_easy_setopt(handle, CURLOPT_URL, ctx->url);
@@ -312,8 +312,8 @@ static void jsB_new_XMLHttpRequest(js_State *J)
 static void Xp_open(js_State *J)
 {
 	// TODO xhr.open(method, url, isAsync, user, passwd)
-	js_Object *o1 = js_toobject(J, 1); // this
-	js_Object *o2 = js_toobject(J, 0); // open
+	// js_Object *o1 = js_toobject(J, 1); // argv1
+	js_Object *self = js_toobject(J, 0); // this
 	int async;	
 	int n = js_getlength(J, 0);
 	char *method = js_tostring(J, 1);
@@ -323,21 +323,26 @@ static void Xp_open(js_State *J)
 		async = js_toboolean(J, 3);
 	}
 	req_ctx * ctx = register_request(method, url, async, J);
-
+    self->u.c.data = ctx;
 }
 
 static void Xp_onload(js_State *J)
 {
-
+    // 暂时使用方法 
+    js_Object *self = js_toobject(J, 0);
+    js_Object *func = js_toobject(J, 1);
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    ctx->events[XHR_EVENT_LOAD] = func;
 }
 
 static void Xp_send(js_State *J)
 {
-	js_Loop *g = (js_Loop *)js_getcontext(J);
+	js_Object *self = js_toobject(J, 0); // this
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
 	// 如何获取当前curl easy handle
 	// if not async use curl easy handle
 	// if async curl multi handle add easy handle
-	// curl_multi_add_handle(g->curlm_handle, easy_handle);
+	curl_multi_add_handle(ctx->curlm_handle, ctx->handle);
 }
 
 void jsB_initxhr(js_State *J)
