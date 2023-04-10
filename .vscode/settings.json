@@ -9,6 +9,7 @@
 		"curl.h": "c",
 		"stdio.h": "c",
 		"cstring": "c",
-		"stat.h": "c"
+		"stat.h": "c",
+		"string.h": "c"
 	}
 }

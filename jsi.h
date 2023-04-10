@@ -15,6 +15,7 @@
 
 #include <event2/event.h>
 #include <curl/curl.h>
+#include <ctype.h>
 
 /* NOTE: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103052 */
 #ifdef __GNUC__
@@ -478,24 +479,6 @@ typedef struct curl_socket_s
     curl_socket_t sockfd;
 } curl_socket_ctx;
 
-typedef void (*curl_done_cb)(CURLMsg *message, void *arg);
-typedef char content_t;
-typedef struct
-{
-	char *method;
-    char *url; // 使用strdup，需要free，见destroy_req_ctx
-	int async;
-
-    content_t *hbuf; // header content buffer
-    size_t hlen;
-    content_t *bbuf; // body content buffer
-    size_t blen;
-    curl_done_cb done_cb;
-    CURL *handle; // curl easy handle
-	CURLM *curlm_handle;
-    unsigned short ready_state; // xhr ready_state
-	js_Object *events[XHR_EVENT_MAX];
-} req_ctx;
 
 /* jstimer.c */
 typedef struct timer_ctx_s
@@ -510,12 +493,36 @@ typedef struct timer_ctx_s
 	struct timer_ctx_s *timer_next;
 } timer_ctx;
 
-typedef struct {
+typedef struct js_Loop {
 	struct event_base *base;
 	timer_ctx *timer_list;
 	CURLM *curlm_handle;
 	struct event *curlm_timeout;
 } js_Loop;
+
+typedef void (*curl_done_cb)(CURLMsg *message, void *arg);
+typedef char content_t;
+typedef struct
+{
+	js_State *J;
+	js_Loop *g;
+
+	char *method;
+    char *url; // 使用strdup，需要free，见destroy_req_ctx
+	int async;
+
+    content_t *hbuf; // header content buffer
+    size_t hlen;
+    content_t *bbuf; // body content buffer
+    size_t blen;
+    curl_done_cb done_cb;
+    CURL *handle; // curl easy handle
+	CURLM *curlm_handle;
+    unsigned short ready_state; // xhr ready_state
+	int sent;
+	int status;
+	js_Object *events[XHR_EVENT_MAX];
+} req_ctx;
 
 /* jsrun.c */
 js_Environment *jsR_newenvironment(js_State *J, js_Object *variables, js_Environment *outer);

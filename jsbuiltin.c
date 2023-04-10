@@ -230,7 +230,7 @@ void jsB_init(js_State *J)
 	jsB_initjson(J);
 
 	jsB_inittimer(J);
-	jsB_initxhr(J);
+	// jsB_initxhr(J);
 
 	/* Initialize the global object */
 	js_pushnumber(J, NAN);

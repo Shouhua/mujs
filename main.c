@@ -326,6 +326,8 @@ main(int argc, char **argv)
 
 	js_setcontext(J, loop);
 
+	jsB_initxhr(J);
+
 	js_newcfunction(J, jsB_gc, "gc", 0);
 	js_setglobal(J, "gc");
 

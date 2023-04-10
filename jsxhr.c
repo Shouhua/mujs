@@ -1,5 +1,8 @@
 #include "jsi.h"
 
+#define TAG "XMLHttpRequest"
+#define CONTENT_LEN 1024*1024
+
 static size_t header_cb(char *ptr, size_t size, size_t nmemb, void *data);
 static size_t write_cb(void *ptr, size_t size, size_t nmemb, void *data);
 static int progress_cb(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
@@ -165,8 +168,7 @@ static void curl_perform(int fd, short event, void *arg)
     }
 }
 
-static void curlm_timeout(struct event_base *base,
-	int fd,
+static void curlm_timeout(int fd,
 	short flags,
 	void *userdata)
 {
@@ -185,10 +187,27 @@ static size_t header_cb(char *ptr, size_t size, size_t nmemb, void *data)
     req_ctx *ctx = (req_ctx *)data;
     if(strncmp(status_line, ptr, sizeof(status_line) - 1) == 0) // 第一行HTTP/2.0 OK
     {
+        if(ctx->hlen == 0)
+        {
+            // XHR_EVENT_LOAD_START
+        }
+        else
+        {
+            // free(ctx->hbuf);
+            // ctx->hbuf = realloc(ctx->hbuf, CONTENT_LEN);
+        }
     }
     else if(strncmp(empty_line, ptr, sizeof(empty_line) - 1) == 0) // header结束了
     {
-        ctx->ready_state = XHR_RSTATE_HEADERS_RECEIVED;
+        /* 填充xhr返回的status code等
+        long code = -1;
+        curl_easy_getinfo(ctx->curl_handle, CURLINFO_RESPONSE_CODE, &code);
+        if(code > -1 && code / 100 != 3) // redirect
+        {
+            ctx->ready_state = XHR_RSTATE_HEADERS_RECEIVED;
+            // XHR_EVENT_READY_STATE_CHANGED
+        }
+        */
         *(ctx->hbuf+ctx->hlen-2) = '\0';
         return real_len;
     }
@@ -199,14 +218,15 @@ static size_t header_cb(char *ptr, size_t size, size_t nmemb, void *data)
         {
             for(char *temp = ptr; temp != colon; temp++)
             {
-                *temp = toupper(*temp);
+                *temp = tolower(*temp);
             }
         }
     }
-    if((ctx->hlen + real_len) < 1024)
+    if((ctx->hlen + real_len) > CONTENT_LEN)
     {
-        memcpy(ctx->hbuf+ctx->hlen, (content_t *)ptr, real_len);
+        ctx->hbuf = realloc(ctx->hbuf, ctx->hlen + real_len);
     }
+    memcpy(ctx->hbuf+ctx->hlen, (content_t *)ptr, real_len);
     ctx->hlen += real_len;
     return real_len;
 }
@@ -218,11 +238,13 @@ static size_t write_cb(void *ptr, size_t size, size_t nmemb, void *data)
     if(ctx->ready_state == XHR_RSTATE_HEADERS_RECEIVED)
     {
         ctx->ready_state = XHR_RSTATE_LOADING;
+        // emit XHR_EVENT_READY_STATE_CHANGED
     }
-    if((ctx->blen + real_len) < 1024)
+    if((ctx->blen + real_len) > CONTENT_LEN)
     {
-        memcpy(ctx->bbuf+ctx->blen, (content_t *)ptr, real_len);
+        ctx->bbuf = realloc(ctx->bbuf, ctx->blen + real_len);
     }
+    memcpy(ctx->bbuf+ctx->blen, (content_t *)ptr, real_len);
     ctx->blen += real_len;
     return real_len;
 }
@@ -233,6 +255,12 @@ static int progress_cb(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl
     {
         curl_off_t cl = -1;
         curl_easy_getinfo(ctx->handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &cl);
+        /*
+        // js define property xhr.lengthComputable = cl 
+        // js define property xhr.loaded = dlnow 
+        // js define property xhr.total = dltotal 
+        // emit XHR_EVENT_PROGRESS
+        */
         if(cl > 0) {
             printf("%s 可以获取下载内容总长度：%ld\n", ctx->url, cl);
         } 
@@ -248,10 +276,32 @@ static int progress_cb(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl
 static void request_done_cb(CURLMsg *message, void *arg)
 {
     req_ctx *ctx = (req_ctx *)arg;
-    printf("***************************** %s header(%ld) *********************************\n",ctx->url, ctx->hlen);
-    printf("%s\n", ctx->hbuf);
-    printf("***************************** %s body(%ld) *********************************\n", ctx->url, ctx->blen);
-    printf("%s\n", ctx->bbuf);
+    ctx->ready_state = XHR_RSTATE_DONE;
+    js_pushobject(ctx->J, ctx->events[XHR_EVENT_LOAD]);
+    js_pushundefined(ctx->J);
+    if(js_pcall(ctx->J, 0))
+    {
+		fprintf(stderr, "%s\n", js_trystring(ctx->J, -1, "Error"));
+		js_pop(ctx->J, 1);
+		return;
+    }
+    // printf("***************************** %s header(%ld) *********************************\n",ctx->url, ctx->hlen);
+    // printf("%s\n", ctx->hbuf);
+    // printf("***************************** %s body(%ld) *********************************\n", ctx->url, ctx->blen);
+    // printf("%s\n", ctx->bbuf);
+}
+
+char* strdup (const char* s)
+{
+  size_t slen = strlen(s);
+  char* result = malloc(slen + 1);
+  if(result == NULL)
+  {
+    return NULL;
+  }
+
+  memcpy(result, s, slen+1);
+  return result;
 }
 
 static req_ctx * register_request(const char *method, 
@@ -261,15 +311,20 @@ static req_ctx * register_request(const char *method,
 {
 	js_Loop *g = (js_Loop *)js_getcontext(J);
     req_ctx *ctx = malloc(sizeof(req_ctx));
-    ctx->hbuf = malloc(sizeof(content_t) * 1024);
-    memset(ctx->hbuf, 0, 1024);
-    ctx->bbuf = malloc(sizeof(content_t) * 1024);
-    memset(ctx->bbuf, 0, 1024);
+
+    ctx->J = J;
+    ctx->g = g;
+
     ctx->hlen = ctx->blen = 0;
+    ctx->hbuf = malloc(sizeof(content_t) * CONTENT_LEN);
+    memset(ctx->hbuf, 0, CONTENT_LEN);
+    ctx->bbuf = malloc(sizeof(content_t) * CONTENT_LEN);
+    memset(ctx->bbuf, 0, CONTENT_LEN);
     ctx->done_cb = request_done_cb;
     ctx->url = strdup(url);
 	ctx->method = strdup(method);
 	ctx->async = async;
+    ctx->sent = 0;
 
     CURL *handle = curl_easy_init();
     ctx->handle = handle;
@@ -316,9 +371,9 @@ static void Xp_open(js_State *J)
 	js_Object *self = js_toobject(J, 0); // this
 	int async;	
 	int n = js_getlength(J, 0);
-	char *method = js_tostring(J, 1);
-	char *url = js_tostring(J, 2);
-	if(n = 3) 
+	const char *method = js_tostring(J, 1);
+	const char *url = js_tostring(J, 2);
+	if(n == 3) 
 	{
 		async = js_toboolean(J, 3);
 	}
@@ -343,6 +398,26 @@ static void Xp_send(js_State *J)
 	// if not async use curl easy handle
 	// if async curl multi handle add easy handle
 	curl_multi_add_handle(ctx->curlm_handle, ctx->handle);
+    ctx->sent = 1;
+}
+
+static void Xp_response(js_State *J)
+{
+	js_Object *self = js_toobject(J, 0); // this
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    // if(ctx->blen != 0)
+    // {
+        // switch(ctx->response_type)
+        // {
+        //     case XHR_RTYPE_DEFAULT:
+        //     case XHR_RTYPE_TEXT:
+        //     case XHR_RTYPE_JSON:
+        //     case XHR_RTYPE_ARRAY_BUFFER:
+        //     default:
+        // }
+        js_pushstring(J, ctx->bbuf);
+    // }
+    // js_pushundefined(J);
 }
 
 void jsB_initxhr(js_State *J)
@@ -356,13 +431,31 @@ void jsB_initxhr(js_State *J)
     curl_multi_setopt(loop->curlm_handle, CURLMOPT_TIMERFUNCTION, start_timeout);
     curl_multi_setopt(loop->curlm_handle, CURLMOPT_TIMERDATA, loop);
 
+    // js_getglobal(J, "Object");
+    // js_getproperty(J, -1, "prototype");
+    // js_newuserdata(J, TAG, loop, NULL); // TODO finalizer
+    // {
+    //     js_newcfunction(J, Xp_open, "XMLHttpRequest.prototype.open", 0);
+    //     js_defproperty(J, -2, "open", JS_DONTENUM);
+    //     js_newcfunction(J, Xp_send, "XMLHttpRequest.prototype.send", 0);
+    //     js_defproperty(J, -2, "send", JS_DONTENUM);
+
+    //     js_newcfunction(J, Xp_onload, "XMLHttpRequest.prototype.onload", 0);
+    //     js_defproperty(J, -2, "onload", JS_DONTENUM);
+
+    //     js_newcfunction(J, Xp_response, "XMLHttpRequest.prototype.response", 0);
+    //     js_defproperty(J, -2, "response", JS_READONLY);
+    // }
+	// js_newcconstructor(J, jsB_new_XMLHttpRequest, jsB_new_XMLHttpRequest, "XMLHttpRequest", 0);
+    // js_defglobal(J, "XMLHttpRequest", JS_DONTENUM);
 	js_pushobject(J, J->Xhr_prototype);
 	{
 		jsB_propf(J, "XMLHttpRequest.prototype.toString", Xp_toString, 0);
 		jsB_propf(J, "XMLHttpRequest.prototype.open", Xp_open, 2); /* 1 */
 		jsB_propf(J, "XMLHttpRequest.prototype.onload", Xp_onload, 0); /* 1 */
 		jsB_propf(J, "XMLHttpRequest.prototype.send", Xp_send, 0);
+		jsB_propf(J, "XMLHttpRequest.prototype.response", Xp_response, 0);
 	}
 	js_newcconstructor(J, jsB_new_XMLHttpRequest, jsB_new_XMLHttpRequest, "XMLHttpRequest", 0);
-
+    js_defglobal(J, "XMLHttpRequest", JS_DONTENUM);
 }
