@@ -10,6 +10,7 @@
 		"stdio.h": "c",
 		"cstring": "c",
 		"stat.h": "c",
-		"string.h": "c"
+		"string.h": "c",
+		"jsi.h": "c"
 	}
 }

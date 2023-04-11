@@ -275,20 +275,27 @@ static int progress_cb(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl
 
 static void request_done_cb(CURLMsg *message, void *arg)
 {
-    req_ctx *ctx = (req_ctx *)arg;
-    ctx->ready_state = XHR_RSTATE_DONE;
-    js_pushobject(ctx->J, ctx->events[XHR_EVENT_LOAD]);
-    js_pushundefined(ctx->J);
-    if(js_pcall(ctx->J, 0))
+    if(message->data.result != CURLE_OK)
     {
-		fprintf(stderr, "%s\n", js_trystring(ctx->J, -1, "Error"));
-		js_pop(ctx->J, 1);
-		return;
+        fprintf(stderr, "下载出现问题：%d\n", message->data.result);
     }
-    // printf("***************************** %s header(%ld) *********************************\n",ctx->url, ctx->hlen);
-    // printf("%s\n", ctx->hbuf);
-    // printf("***************************** %s body(%ld) *********************************\n", ctx->url, ctx->blen);
-    // printf("%s\n", ctx->bbuf);
+    else
+    {
+        req_ctx *ctx = (req_ctx *)arg;
+        ctx->ready_state = XHR_RSTATE_DONE;
+        js_pushobject(ctx->J, ctx->events[XHR_EVENT_LOAD]);
+        js_pushundefined(ctx->J);
+        if(js_pcall(ctx->J, 0))
+        {
+            fprintf(stderr, "%s\n", js_trystring(ctx->J, -1, "Error"));
+            js_pop(ctx->J, 1);
+            return;
+        }
+        // printf("***************************** %s header(%ld) *********************************\n",ctx->url, ctx->hlen);
+        // printf("%s\n", ctx->hbuf);
+        // printf("***************************** %s body(%ld) *********************************\n", ctx->url, ctx->blen);
+        // printf("%s\n", ctx->bbuf);
+    }
 }
 
 char* strdup (const char* s)
@@ -325,6 +332,8 @@ static req_ctx * register_request(const char *method,
 	ctx->method = strdup(method);
 	ctx->async = async;
     ctx->sent = 0;
+    ctx->timeout = 0;
+    ctx->response_type = XHR_RTYPE_DEFAULT; // default means text
 
     CURL *handle = curl_easy_init();
     ctx->handle = handle;
@@ -347,14 +356,11 @@ static req_ctx * register_request(const char *method,
     curl_easy_setopt(handle, CURLOPT_XFERINFOFUNCTION, progress_cb);
     curl_easy_setopt(handle, CURLOPT_XFERINFODATA, ctx);
 
+    curl_easy_setopt(ctx->handle, CURLOPT_TIMEOUT_MS, 0L); // 设置默认值
+    curl_easy_setopt(ctx->handle, CURLOPT_CONNECTTIMEOUT_MS, 1000L); // 设置连接超时默认值, curl默认值300s
+
 	ctx->ready_state = XHR_RSTATE_OPENED;
 	return ctx;
-}
-
-static void Xp_toString(js_State *J)
-{
-	// TODO
-	// print '[object XMLHttpRequest]'
 }
 
 static void jsB_new_XMLHttpRequest(js_State *J)
@@ -364,8 +370,24 @@ static void jsB_new_XMLHttpRequest(js_State *J)
 	js_pushobject(J, obj);
 }
 
+static void check_curl_handle(js_State *J)
+{
+    js_Loop *loop = js_getcontext(J);
+    if(!loop->curlm_handle)
+    {
+        loop->curlm_handle = curl_multi_init();
+        loop->curlm_timeout = evtimer_new(loop->base, curlm_timeout, loop);
+
+        curl_multi_setopt(loop->curlm_handle, CURLMOPT_SOCKETFUNCTION, handle_socket);
+        curl_multi_setopt(loop->curlm_handle, CURLMOPT_SOCKETDATA, loop);
+        curl_multi_setopt(loop->curlm_handle, CURLMOPT_TIMERFUNCTION, start_timeout);
+        curl_multi_setopt(loop->curlm_handle, CURLMOPT_TIMERDATA, loop);
+    }
+}
+
 static void Xp_open(js_State *J)
 {
+    check_curl_handle(J);
 	// TODO xhr.open(method, url, isAsync, user, passwd)
 	// js_Object *o1 = js_toobject(J, 1); // argv1
 	js_Object *self = js_toobject(J, 0); // this
@@ -373,7 +395,7 @@ static void Xp_open(js_State *J)
 	int n = js_getlength(J, 0);
 	const char *method = js_tostring(J, 1);
 	const char *url = js_tostring(J, 2);
-	if(n == 3) 
+	if(n == 3) // js_getlength是不是不能动态获取参数个数
 	{
 		async = js_toboolean(J, 3);
 	}
@@ -381,7 +403,7 @@ static void Xp_open(js_State *J)
     self->u.c.data = ctx;
 }
 
-static void Xp_onload(js_State *J)
+static void Xp_onload_setter(js_State *J)
 {
     // 暂时使用方法 
     js_Object *self = js_toobject(J, 0);
@@ -401,60 +423,134 @@ static void Xp_send(js_State *J)
     ctx->sent = 1;
 }
 
-static void Xp_response(js_State *J)
+static void Xp_response_type_getter(js_State *J)
+{
+    char *str;
+	js_Object *self = js_toobject(J, 0); // this
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    switch(ctx->response_type)
+    {
+        case XHR_RTYPE_DEFAULT:
+            str = "";
+            break;
+        case XHR_RTYPE_TEXT:
+            str = "text";
+            break;
+        case XHR_RTYPE_ARRAY_BUFFER:
+            str = "arraybuffer";
+            break;
+        case XHR_RTYPE_JSON:
+            str = "json";
+            break;
+        default:
+            js_typeerror(J, "response type码不对：%d\n", ctx->response_type);
+    }
+    js_pushstring(J, str);
+}
+static void Xp_response_type_setter(js_State *J)
+{
+    static const char array_buffer[] = "arraybuffer";
+    static const char json[] = "json";
+    static const char text[] = "text";
+
+	js_Object *self = js_toobject(J, 0); // this
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    const char *v = js_tostring(J, -1);
+    if(v)
+    {
+        if(strncmp(array_buffer, v, sizeof(array_buffer)) - 1 == 0)
+        {
+            ctx->response_type = XHR_RTYPE_ARRAY_BUFFER;
+        }        
+        else if (strncmp(json, v, sizeof(json) - 1) == 0)
+            ctx->response_type = XHR_RTYPE_JSON;
+        else if (strncmp(text, v, sizeof(text) - 1) == 0)
+            ctx->response_type = XHR_RTYPE_TEXT;
+        else if (strlen(v) == 0)
+            ctx->response_type = XHR_RTYPE_DEFAULT;
+    }
+    js_pushundefined(J);
+}
+
+static void Xp_response_getter(js_State *J)
 {
 	js_Object *self = js_toobject(J, 0); // this
     req_ctx *ctx = (req_ctx *)self->u.c.data;
-    // if(ctx->blen != 0)
-    // {
-        // switch(ctx->response_type)
-        // {
-        //     case XHR_RTYPE_DEFAULT:
-        //     case XHR_RTYPE_TEXT:
-        //     case XHR_RTYPE_JSON:
-        //     case XHR_RTYPE_ARRAY_BUFFER:
-        //     default:
-        // }
-        js_pushstring(J, ctx->bbuf);
-    // }
-    // js_pushundefined(J);
+    if(ctx->blen > 0)
+    {
+        switch(ctx->response_type)
+        {
+            case XHR_RTYPE_DEFAULT:
+            case XHR_RTYPE_TEXT:
+                js_pushstring(J, ctx->bbuf);
+                break;
+            case XHR_RTYPE_JSON:
+                js_getglobal(J, "JSON");
+                js_getproperty(J, -1, "parse");
+                js_rot2(J);
+                js_pushstring(J, ctx->bbuf);
+                if (js_pcall(J, 1)) {
+                    fprintf(stderr, "解析json出问题了");
+                    js_pop(J, 1);
+                    return;
+                }
+                break;
+            case XHR_RTYPE_ARRAY_BUFFER:
+                // TODO
+            default:
+                js_typeerror(J, "response type不符合： %d\n", ctx->response_type);
+        }
+    }
+}
+
+static void Xp_timeout_setter(js_State *J)
+{
+    js_Object *self = js_toobject(J, 0);
+    long timeout = js_tonumber(J, -1);
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    if(!ctx->async)
+    {
+        fprintf(stderr, "timeout设置不能用于sync模式下");
+    }
+    if(!ctx->sent)
+    {
+        curl_easy_setopt(ctx->handle, CURLOPT_TIMEOUT_MS, &timeout);
+        ctx->timeout = timeout;
+    }
+    else
+    {
+        fprintf(stderr, "timeout设置要在send之前设置");
+    }
+}
+
+static void Xp_timeout_getter(js_State *J)
+{
+    js_Object *self = js_toobject(J, 0);
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    js_pushnumber(J, ctx->timeout);
 }
 
 void jsB_initxhr(js_State *J)
 {
-	js_Loop *loop = (js_Loop *)js_getcontext(J);
-	loop->curlm_handle = curl_multi_init();
-	loop->curlm_timeout = evtimer_new(loop->base, curlm_timeout, loop);
-
-	curl_multi_setopt(loop->curlm_handle, CURLMOPT_SOCKETFUNCTION, handle_socket);
-    curl_multi_setopt(loop->curlm_handle, CURLMOPT_SOCKETDATA, loop);
-    curl_multi_setopt(loop->curlm_handle, CURLMOPT_TIMERFUNCTION, start_timeout);
-    curl_multi_setopt(loop->curlm_handle, CURLMOPT_TIMERDATA, loop);
-
-    // js_getglobal(J, "Object");
-    // js_getproperty(J, -1, "prototype");
-    // js_newuserdata(J, TAG, loop, NULL); // TODO finalizer
-    // {
-    //     js_newcfunction(J, Xp_open, "XMLHttpRequest.prototype.open", 0);
-    //     js_defproperty(J, -2, "open", JS_DONTENUM);
-    //     js_newcfunction(J, Xp_send, "XMLHttpRequest.prototype.send", 0);
-    //     js_defproperty(J, -2, "send", JS_DONTENUM);
-
-    //     js_newcfunction(J, Xp_onload, "XMLHttpRequest.prototype.onload", 0);
-    //     js_defproperty(J, -2, "onload", JS_DONTENUM);
-
-    //     js_newcfunction(J, Xp_response, "XMLHttpRequest.prototype.response", 0);
-    //     js_defproperty(J, -2, "response", JS_READONLY);
-    // }
-	// js_newcconstructor(J, jsB_new_XMLHttpRequest, jsB_new_XMLHttpRequest, "XMLHttpRequest", 0);
-    // js_defglobal(J, "XMLHttpRequest", JS_DONTENUM);
 	js_pushobject(J, J->Xhr_prototype);
 	{
-		jsB_propf(J, "XMLHttpRequest.prototype.toString", Xp_toString, 0);
 		jsB_propf(J, "XMLHttpRequest.prototype.open", Xp_open, 2); /* 1 */
-		jsB_propf(J, "XMLHttpRequest.prototype.onload", Xp_onload, 0); /* 1 */
 		jsB_propf(J, "XMLHttpRequest.prototype.send", Xp_send, 0);
-		jsB_propf(J, "XMLHttpRequest.prototype.response", Xp_response, 0);
+
+        js_newcfunction(J, Xp_response_getter, "response", 0);
+        js_pushnull(J);
+        js_defaccessor(J, -3, "response", JS_READONLY);
+
+        js_newcfunction(J, Xp_response_type_getter, "response_type_getter", 0);
+        js_newcfunction(J, Xp_response_type_setter, "response_type_seter", 1);
+        js_defaccessor(J, -3, "responseType", JS_DONTENUM);
+
+        js_pushnull(J);
+        js_newcfunction(J, Xp_onload_setter, "onload_setter", 1);
+        js_defaccessor(J, -3, "onload", JS_DONTCONF | JS_DONTENUM);
+        js_newcfunction(J, Xp_timeout_getter, "timeout_getter", 0);
+        js_newcfunction(J, Xp_timeout_setter, "timeout_setter", 1);
+        js_defaccessor(J, -3, "timeout", JS_DONTCONF | JS_DONTENUM);
 	}
 	js_newcconstructor(J, jsB_new_XMLHttpRequest, jsB_new_XMLHttpRequest, "XMLHttpRequest", 0);
     js_defglobal(J, "XMLHttpRequest", JS_DONTENUM);

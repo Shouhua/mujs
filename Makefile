@@ -32,6 +32,7 @@ endif
 
 HDRS = mujs.h jsi.h regexp.h utf.h astnames.h opnames.h
 
+#regexp里面#define next regnext，文件放在此行后面会报错
 SRCS = \
 	jsarray.c \
 	jsboolean.c \
@@ -56,10 +57,11 @@ SRCS = \
 	jsstate.c \
 	jsstring.c \
 	jsvalue.c \
-	regexp.c \
-	utf.c \
+	jsloop.c \
 	jstimer.c \
-	jsxhr.c
+	jsxhr.c \
+	regexp.c \
+	utf.c
 
 one.c:
 	for F in $(SRCS); do echo "#include \"$$F\""; done > $@

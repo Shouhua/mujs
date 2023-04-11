@@ -38,6 +38,11 @@ extern "C" {
 #endif
 
 typedef struct js_State js_State;
+typedef struct js_Loop js_Loop;
+
+js_Loop *js_newloop(js_State *J);
+void js_runloop(js_Loop *loop);
+void js_freeloop(js_Loop *loop);
 
 typedef void *(*js_Alloc)(void *memctx, void *ptr, int size);
 typedef void (*js_Panic)(js_State *J);

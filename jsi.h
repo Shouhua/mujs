@@ -481,24 +481,24 @@ typedef struct curl_socket_s
 
 
 /* jstimer.c */
-typedef struct timer_ctx_s
+typedef struct timer_ctx
 {
 	js_State *J;
 	struct event_base *base;
 	struct event *ev;
 	size_t id;
-	js_Value *func;
+	js_Value *func; // timer callback
 	size_t argc;
-	js_Value *argv;
-	struct timer_ctx_s *timer_next;
+	js_Value *argv; // 参数链表
+	struct timer_ctx *next;
 } timer_ctx;
 
-typedef struct js_Loop {
+struct js_Loop {
 	struct event_base *base;
-	timer_ctx *timer_list;
-	CURLM *curlm_handle;
-	struct event *curlm_timeout;
-} js_Loop;
+	timer_ctx *timer_list; // setInterval, setTimeout事件列表
+	CURLM *curlm_handle; // xhr异步curlm
+	struct event *curlm_timeout; // xhr异步timout事件
+};
 
 typedef void (*curl_done_cb)(CURLMsg *message, void *arg);
 typedef char content_t;
@@ -510,6 +510,8 @@ typedef struct
 	char *method;
     char *url; // 使用strdup，需要free，见destroy_req_ctx
 	int async;
+	long timeout;
+	short response_type;
 
     content_t *hbuf; // header content buffer
     size_t hlen;

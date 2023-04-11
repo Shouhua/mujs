@@ -10,9 +10,6 @@
 
 #include "mujs.h"
 
-#include <event2/event.h>
-#include "jsi.h"
-
 static char *xoptarg; /* Global argument pointer. */
 static int xoptind = 0; /* Global argv index. */
 static int xgetopt(int argc, char *argv[], char *optstring)
@@ -300,11 +297,11 @@ main(int argc, char **argv)
 {
 	char *input;
 	js_State *J;
+	js_Loop *loop;
 	int status = 0;
 	int strict = 0;
 	int interactive = 0;
 	int i, c;
-	js_Loop *loop = malloc(sizeof(js_Loop));
 
 	while ((c = xgetopt(argc, argv, "is")) != -1) {
 		switch (c) {
@@ -314,19 +311,13 @@ main(int argc, char **argv)
 		}
 	}
 
-	curl_global_init(CURL_GLOBAL_ALL);
-	loop->base = event_base_new();
-	loop->timer_list = NULL;
-
 	J = js_newstate(NULL, NULL, strict ? JS_STRICT : 0);
 	if (!J) {
 		fprintf(stderr, "Could not initialize MuJS.\n");
 		exit(1);
 	}
 
-	js_setcontext(J, loop);
-
-	jsB_initxhr(J);
+	loop = js_newloop(J);
 
 	js_newcfunction(J, jsB_gc, "gc", 0);
 	js_setglobal(J, "gc");
@@ -399,13 +390,12 @@ main(int argc, char **argv)
 		}
 	}
 
-	event_base_dispatch(loop->base);
+	// event_base_dispatch
+	js_runloop(loop);
 
 	js_gc(J, 0);
 	js_freestate(J);
 
-	event_base_free(loop->base);
-	libevent_global_shutdown();
-
+	js_freeloop(loop);
 	return status;
 }
