@@ -1,5 +1,8 @@
-## TODO
-1. regex
+## 2023-04-12
+c函数中获取js调用时的argc和argv，注册时候要注意写入最小参数个数，这个在调用时会补全，如果写的时全量的参数个数，永远补全就不能获取动态argc了，详细可以参考Xp_open函数获取第三个async参数。  
+argc确定后，不同类型的argv使用不同的方法获取，比如boolean使用js_toboolean(J, -1)
+## 2023-04-11
+Opaque Pointers, 比如mujs.h中的js_State, 在业务代码中使用时，是不知道她的内部细节的
 ## 2023-03-28
 ### String Intern
 mujs AA tree<br/>

@@ -1,12 +1,3 @@
-/* curl_multi_test.c
-   Clemens Gruber, 2013
-   <clemens.gruber@pqgruber.com>
-   Code description:
-    Requests 4 Web pages via the CURL multi interface
-    and checks if the HTTP status code is 200.
-   Update: Fixed! The check for !numfds was the problem.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef WIN32

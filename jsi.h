@@ -496,16 +496,17 @@ typedef struct timer_ctx
 struct js_Loop {
 	struct event_base *base;
 	timer_ctx *timer_list; // setInterval, setTimeout事件列表
-	CURLM *curlm_handle; // xhr异步curlm
+	CURLM *multi_handle; // xhr异步curl multi handle
+	CURL *easy_handle;
 	struct event *curlm_timeout; // xhr异步timout事件
 };
 
-typedef void (*curl_done_cb)(CURLMsg *message, void *arg);
+typedef void (*curl_done_cb)(CURLcode result, void *arg);
 typedef char content_t;
 typedef struct
 {
 	js_State *J;
-	js_Loop *g;
+	js_Loop *loop;
 
 	char *method;
     char *url; // 使用strdup，需要free，见destroy_req_ctx
@@ -518,8 +519,8 @@ typedef struct
     content_t *bbuf; // body content buffer
     size_t blen;
     curl_done_cb done_cb;
-    CURL *handle; // curl easy handle
-	CURLM *curlm_handle;
+    // CURL *handle; // curl easy handle
+	// CURLM *curlm_handle;
     unsigned short ready_state; // xhr ready_state
 	int sent;
 	int status;
@@ -945,6 +946,8 @@ void jsB_initdate(js_State *J);
 
 void jsB_inittimer(js_State *J);
 void jsB_initxhr(js_State *J);
+void jsB_initcurl(js_Loop *loop);
+void js_freexhr(js_Loop *loop);
 
 void jsB_propf(js_State *J, const char *name, js_CFunction cfun, int n);
 void jsB_propn(js_State *J, const char *name, double number);

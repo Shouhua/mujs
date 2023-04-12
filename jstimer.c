@@ -42,7 +42,7 @@ static void register_timer(js_State *J, short is_interval)
 	js_Loop *loop;
 	struct event_base *base;
 	timer_ctx *ctx;
-	int n; // 回调函数参数个数
+	int n = js_gettop(J) - 1 - 2; // 回调函数参数个数, 减去this, func, milliseconds
 
 	if (!js_iscallable(J, 1))
 		js_typeerror(J, "callback is not a function");
@@ -55,8 +55,8 @@ static void register_timer(js_State *J, short is_interval)
 	loop = js_getcontext(J);
 	base = loop->base;
 	ctx = new_timer_ctx(J, base, NULL, loop);
-	n = js_getlength(J, 1);
 	ctx->argc = n < 0 ? 0 : n; // func, millis, arg1, arg2
+	// 后面timout后需要还原func和argvs
 	if(ctx->argc > 0)
 	{
 		ctx->argv = malloc(sizeof(js_Value) * (ctx->argc));
@@ -80,7 +80,6 @@ static void register_timer(js_State *J, short is_interval)
 	js_newnumber(J, ctx->id);
 }
 
-// setTimeout(function(){}, milliseconds, args)
 static void jsB_setTimeout(js_State *J)
 {
 	register_timer(J, 0);
@@ -145,4 +144,7 @@ void jsB_inittimer(js_State *J)
 
 	js_newcfunction(J, jsB_setInterval, "setInterval", 1);
 	js_setglobal(J, "setInterval");
+
+	js_newcfunction(J, jsB_clearTimeout, "clearInterval", 1);
+	js_setglobal(J, "clearInterval");
 }

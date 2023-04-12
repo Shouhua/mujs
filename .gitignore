@@ -10,3 +10,5 @@ tags
 user.make
 .exrc
 .vimrc
+
+node_modules
