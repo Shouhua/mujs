@@ -1,3 +1,28 @@
+本工程fork自官方的mujs库，主要用于学习js引擎相关内容，引入libevent和libcurl，实现了简单的timer和xhr接口, 例子可以参见 [xhr.js](./note/demo/xhr.js)
+```shell
+make clean # 主要是重新生成one.c文件
+make debug
+./build/debug/mujs ./note/demo/xhr.js
+```
+1. timer
+接口主要代码见 [jstimer.c](./jstimer.c)，主要实现的接口有
+- setTimeout
+- setInterval
+- clearTimeout
+- clearInterval
+2. XHRHttpRequest
+接口主要代码见 [jsxhr.c](./jsxhr.c)，没有实现event相关，主要实现的接口有
+- open
+- onload
+- send
+- timeout
+- ontimeout
+- response
+- responseType
+- onprogress 虽然没有提供event参数，但是lengthComputable, loaded, total值已经实现
+- new XHRHttpRequest()
+
+### 作者的README
 MuJS: an embeddable Javascript interpreter in C.
 
 ABOUT
