@@ -7,6 +7,17 @@ static size_t get_timer_id()
 	return timer_id++;
 }
 
+static void free_timer_ctx(timer_ctx *ctx)
+{
+	event_del(ctx->ev);
+	ctx->J = NULL;
+	ctx->base = NULL;
+	ctx->ev = NULL;
+	free(ctx->func);
+	free(ctx->argv);
+	free(ctx);
+}
+
 static timer_ctx * new_timer_ctx(js_State *J,
 	struct event_base *base, 
 	struct event *ev,
@@ -38,24 +49,26 @@ static void timer_cb(int fd, short int flags, void *userdata)
 static void register_timer(js_State *J, short is_interval)
 {
 	long millis;
-	struct timeval *tv;
+	struct timeval tv = { 0, 4000};
 	js_Loop *loop;
 	struct event_base *base;
 	timer_ctx *ctx;
-	int n = js_gettop(J) - 1 - 2; // 回调函数参数个数, 减去this, func, milliseconds
+	int n = js_gettop(J) - 1; // 回调函数参数个数, 减去this, func, milliseconds
 
 	if (!js_iscallable(J, 1))
 		js_typeerror(J, "callback is not a function");
 
-	millis = (long)js_tonumber(J, 2);
-	tv = malloc(sizeof(struct timeval));
-	tv->tv_sec = millis / 1000;
-	tv->tv_usec = (millis % 1000) * 1000;
+	if(n > 2)
+	{
+		millis = (long)js_tonumber(J, 2);
+		tv.tv_sec = millis / 1000;
+		tv.tv_usec = (millis % 1000) * 1000;
+	}
 
 	loop = js_getcontext(J);
 	base = loop->base;
 	ctx = new_timer_ctx(J, base, NULL, loop);
-	ctx->argc = n < 0 ? 0 : n; // func, millis, arg1, arg2
+	ctx->argc = (n - 2) < 0 ? 0 : (n - 2); // func, millis, arg1, arg2
 	// 后面timout后需要还原func和argvs
 	if(ctx->argc > 0)
 	{
@@ -74,7 +87,8 @@ static void register_timer(js_State *J, short is_interval)
 		flags |= EV_PERSIST;
 	}
 	ctx->ev = event_new(base, 0, flags, timer_cb, ctx);
-	event_add(ctx->ev, tv);
+	evtimer_del(ctx->ev);
+	event_add(ctx->ev, &tv);
 
 	// return timer id
 	js_newnumber(J, ctx->id);
@@ -89,17 +103,6 @@ static void jsB_setInterval(js_State *J)
 {
 
 	register_timer(J, 1);
-}
-
-static void free_timer(timer_ctx *ctx)
-{
-	event_del(ctx->ev);
-	ctx->J = NULL;
-	ctx->base = NULL;
-	ctx->ev = NULL;
-	free(ctx->func);
-	free(ctx->argv);
-	free(ctx);
 }
 
 static void jsB_clearTimeout(js_State *J)
@@ -117,7 +120,7 @@ static void jsB_clearTimeout(js_State *J)
 	if(ctx->id == id) // 第一个就匹配了
 	{
 		loop->timer_list = loop->timer_list->next;
-		free_timer(ctx);
+		free_timer_ctx(ctx);
 		return;
 	}
 	else
@@ -131,7 +134,7 @@ static void jsB_clearTimeout(js_State *J)
 		js_syntaxerror(J, "找不到id: %ld\n", id);
 	timer_ctx *buf = ctx->next;
 	ctx->next = ctx->next->next;
-	free_timer(buf);
+	free_timer_ctx(buf);
 }
 
 void jsB_inittimer(js_State *J)

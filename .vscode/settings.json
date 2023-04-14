@@ -11,6 +11,7 @@
 		"cstring": "c",
 		"stat.h": "c",
 		"string.h": "c",
-		"jsi.h": "c"
+		"jsi.h": "c",
+		"visibility.h": "c"
 	}
 }

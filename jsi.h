@@ -493,12 +493,21 @@ typedef struct timer_ctx
 	struct timer_ctx *next;
 } timer_ctx;
 
+struct micro_task 
+{
+	js_Object *fn;
+	struct micro_task *next;
+};
+typedef struct micro_task micro_task;
 struct js_Loop {
 	struct event_base *base;
 	timer_ctx *timer_list; // setInterval, setTimeout事件列表
 	CURLM *multi_handle; // xhr异步curl multi handle
 	CURL *easy_handle;
 	struct event *curlm_timeout; // xhr异步timout事件
+	micro_task *micro_list;
+	struct event *micro_event;
+	int is_micro_event_added;
 };
 
 typedef void (*curl_done_cb)(CURLcode result, void *arg);
