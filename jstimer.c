@@ -58,7 +58,7 @@ static void register_timer(js_State *J, short is_interval)
 	if (!js_iscallable(J, 1))
 		js_typeerror(J, "callback is not a function");
 
-	if(n > 2)
+	if(n > 1)
 	{
 		millis = (long)js_tonumber(J, 2);
 		tv.tv_sec = millis / 1000;
@@ -86,8 +86,7 @@ static void register_timer(js_State *J, short is_interval)
 	{
 		flags |= EV_PERSIST;
 	}
-	ctx->ev = event_new(base, 0, flags, timer_cb, ctx);
-	evtimer_del(ctx->ev);
+	ctx->ev = event_new(base, -1, flags, timer_cb, ctx);
 	event_add(ctx->ev, &tv);
 
 	// return timer id

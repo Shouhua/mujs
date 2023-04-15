@@ -508,6 +508,9 @@ struct js_Loop {
 	micro_task *micro_list;
 	struct event *micro_event;
 	int is_micro_event_added;
+
+	js_State *J;
+	char *filename;
 };
 
 typedef void (*curl_done_cb)(CURLcode result, void *arg);

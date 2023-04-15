@@ -29,9 +29,8 @@ static int start_timeout(CURLM *multi, long timeout_ms, void *userp)
     }
     else
     {
-        // if (timeout_ms == 0)
-        //     timeout_ms = 1; /* 0 means directly call socket_action, but we will do it
-                            //    in a bit */
+        if (timeout_ms == 0)
+            timeout_ms = 1; /* 0 means directly call socket_action, but we will do it in a bit */
         struct timeval tv;
         tv.tv_sec = timeout_ms / 1000;
         tv.tv_usec = (timeout_ms % 1000) * 1000;

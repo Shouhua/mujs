@@ -22,11 +22,6 @@ void js_freeloop(js_Loop *loop)
 	libevent_global_shutdown();
 }
 
-void js_runloop(js_Loop *loop)
-{
-	event_base_dispatch(loop->base);
-}
-
 void micro_cb(int fd, short flags, void *userdata)
 {
 	js_State *J = (js_State *)userdata;
@@ -90,10 +85,9 @@ static void jsB_queueMicrotask(js_State *J)
 	{
 		struct timeval tv;
 		tv.tv_sec = 0;
-		tv.tv_usec = 1;
+		tv.tv_usec = 0;
 		event_priority_set(loop->micro_event, 0);
 		evtimer_add(loop->micro_event, &tv);
-		event_priority_set(loop->micro_event, 2);
 		loop->is_micro_event_added = 1;
 	}
 
@@ -103,10 +97,11 @@ static void jsB_queueMicrotask(js_State *J)
 js_Loop *js_newloop(js_State *J)
 {
 
-	event_enable_debug_mode();
+	// event_enable_debug_mode();
 	// event_enable_debug_logging(EVENT_DBG_ALL);
 
 	js_Loop *loop = malloc(sizeof(js_Loop));
+	loop->J = J;
 	loop->base = event_base_new();
 	event_base_priority_init(loop->base, 3);
 	loop->timer_list = NULL;
@@ -122,4 +117,17 @@ js_Loop *js_newloop(js_State *J)
 
 	js_setcontext(J, loop);
 	return loop;
+}
+
+void once_cb(int fd, short flags, void *userdata)
+{
+	js_Loop *loop = (js_Loop *)userdata;
+	js_dofile(loop->J, loop->filename);
+}
+void js_runloop(js_Loop *loop, char *filename)
+{
+	loop->filename = filename;
+	struct timeval tv = { 0, 0 };
+	event_base_once(loop->base, -1, EV_TIMEOUT, once_cb, loop, &tv);
+	event_base_dispatch(loop->base);
 }

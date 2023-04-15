@@ -16,6 +16,6 @@ console.log('after')
 setTimeout(function(){
 	console.log(1)
 }, 10)
-// setTimeout(function(){
-// 	console.log(2)
-// }, 100)
+setTimeout(function(){
+	console.log(2)
+}, 100)

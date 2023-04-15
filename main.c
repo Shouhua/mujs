@@ -363,8 +363,9 @@ main(int argc, char **argv)
 		}
 		js_setglobal(J, "scriptArgs");
 
-		if (js_dofile(J, argv[c]))
-			status = 1;
+		// if (js_dofile(J, argv[c]))
+		// 	status = 1;
+		js_runloop(loop, argv[c]);
 	}
 
 	if (interactive) {
@@ -389,9 +390,6 @@ main(int argc, char **argv)
 			free(input);
 		}
 	}
-
-	// event_base_dispatch
-	js_runloop(loop);
 
 	js_gc(J, 0);
 	js_freestate(J);
