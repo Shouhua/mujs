@@ -506,6 +506,7 @@ struct js_Loop {
 	CURL *easy_handle;
 	struct event *curlm_timeout; // xhr异步timout事件
 	micro_task *micro_list;
+	micro_task *micro_list_tail;
 	struct event *micro_event;
 	int is_micro_event_added;
 
@@ -960,6 +961,7 @@ void jsB_inittimer(js_State *J);
 void jsB_initxhr(js_State *J);
 void jsB_initcurl(js_Loop *loop);
 void js_freexhr(js_Loop *loop);
+void execute_jobs(js_State *J);
 
 void jsB_propf(js_State *J, const char *name, js_CFunction cfun, int n);
 void jsB_propn(js_State *J, const char *name, double number);

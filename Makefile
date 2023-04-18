@@ -5,7 +5,8 @@
 default: build/debug/mujs build/debug/mujs-pp
 
 CFLAGS = -std=c99 -pedantic -Wall -Wextra -Wno-unused-parameter
-CLIBS := -levent -lcurl
+# CLIBS := -lcurl $(shell pkg-config --cflags --libs /usr/local/lib/pkgconfig/libevent.pc)
+CLIBS := -lcurl -levent
 
 OPTIM = -O3
 

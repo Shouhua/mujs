@@ -1,21 +1,24 @@
 console.log('before')
+setTimeout(function(){
+	console.log(1)
+}, 10)
 queueMicrotask(function(){
 	console.log('microtask1')
 	setTimeout(function(){
+		queueMicrotask(function() {
+			console.log('queue micro task...')
+		})
 		console.log('timeout1')
 	}, 10)
 })
 console.log('middle')
 queueMicrotask(function(){
 	console.log('microtask2')
-	var i = setTimeout(function(){
+	setTimeout(function(){
 		console.log('timeout2')
 	}, 10)
 })
 console.log('after')
 setTimeout(function(){
-	console.log(1)
-}, 10)
-setTimeout(function(){
 	console.log(2)
-}, 100)
+}, 10)

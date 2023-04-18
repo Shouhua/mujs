@@ -9,7 +9,7 @@ static size_t get_timer_id()
 
 static void free_timer_ctx(timer_ctx *ctx)
 {
-	event_del(ctx->ev);
+	event_free(ctx->ev);
 	ctx->J = NULL;
 	ctx->base = NULL;
 	ctx->ev = NULL;
@@ -36,6 +36,9 @@ static timer_ctx * new_timer_ctx(js_State *J,
 static void timer_cb(int fd, short int flags, void *userdata)
 {
 	timer_ctx *ctx = (timer_ctx *)userdata;
+
+	execute_jobs(ctx->J);
+
 	js_State *J = ctx->J;
 	js_pushvalue(J, *ctx->func);
 	js_pushundefined(J);
@@ -43,13 +46,16 @@ static void timer_cb(int fd, short int flags, void *userdata)
 	{
 		js_pushvalue(J, ctx->argv[i]);
 	}
-	js_call(J, ctx->argc);
+	if(js_pcall(J, ctx->argc))
+	{
+		fprintf(stderr, "定时器任务运行报错");
+	}
 }
 
 static void register_timer(js_State *J, short is_interval)
 {
 	long millis;
-	struct timeval tv = { 0, 4000};
+	struct timeval tv = { 0, 4000 };
 	js_Loop *loop;
 	struct event_base *base;
 	timer_ctx *ctx;
