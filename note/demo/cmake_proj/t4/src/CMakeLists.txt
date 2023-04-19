@@ -1,0 +1,12 @@
+INCLUDE_DIRECTORIES(/tmp/t3/include/hello)
+LINK_DIRECTORIES("/tmp/t3/lib")
+ADD_EXECUTABLE(main main.c)
+TARGET_LINK_LIBRARIES(main libhello.a)
+MESSAGE(STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR})
+MESSAGE(STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
+MESSAGE(STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR})
+
+FIND_LIBRARY(libhello hello /tmp/t3/lib)
+IF(libhello)
+MESSAGE(STATUS "libhello目录为: " ${libhello})
+endif(libhello)

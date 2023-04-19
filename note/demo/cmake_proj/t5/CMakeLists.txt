@@ -1,0 +1,4 @@
+cmake_minimum_required(VERSION 2.36)
+
+PROJECT(CURLTEST)
+ADD_SUBDIRECTORY(src)

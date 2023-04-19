@@ -1,0 +1,7 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.26)
+PROJECT(HELLO C)
+ADD_SUBDIRECTORY(src bin)
+
+install(FILES COPYRIGHT README DESTINATION share/doc/cmake_proj/t2)
+install(PROGRAMS runhello.sh DESTINATION bin)
+install(DIRECTORY doc/ DESTINATION share/doc/cmake_proj/t2)

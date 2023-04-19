@@ -1,0 +1,6 @@
+find_package(HELLO REQUIRED)
+if(HELLO_FOUND)
+	add_executable(main main.c)
+	include_directories(${HELLO_INCLUDE_DIR})
+	target_link_libraries(main ${HELLO_LIBRARY})
+endif(HELLO_FOUND)
