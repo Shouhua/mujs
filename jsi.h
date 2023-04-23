@@ -490,6 +490,8 @@ typedef struct timer_ctx
 	js_Value *func; // timer callback
 	size_t argc;
 	js_Value *argv; // 参数链表
+	int is_interval;
+	long time;
 	struct timer_ctx *next;
 } timer_ctx;
 
@@ -508,7 +510,6 @@ struct js_Loop {
 	micro_task *micro_list;
 	micro_task *micro_list_tail;
 	struct event *micro_event;
-	int is_micro_event_added;
 
 	js_State *J;
 	char *filename;
@@ -961,7 +962,9 @@ void jsB_inittimer(js_State *J);
 void jsB_initxhr(js_State *J);
 void jsB_initcurl(js_Loop *loop);
 void js_freexhr(js_Loop *loop);
-void execute_jobs(js_State *J);
+void execute_jobs(js_State *J); // 宏任务执行前指向微任务
+void jsB_inittask(js_State *loop);
+void jsB_initjob(js_Loop *loop);
 
 void jsB_propf(js_State *J, const char *name, js_CFunction cfun, int n);
 void jsB_propn(js_State *J, const char *name, double number);

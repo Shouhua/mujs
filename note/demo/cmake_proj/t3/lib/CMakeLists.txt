@@ -1,11 +1,14 @@
-SET(LIBHELLO_SRC hello.c)
-ADD_LIBRARY(hello SHARED ${LIBHELLO_SRC})
-ADD_LIBRARY(hello_static STATIC ${LIBHELLO_SRC})
-SET_TARGET_PROPERTIES(hello_static PROPERTIES OUTPUT_NAME "hello")
-SET_TARGET_PROPERTIES(hello PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-SET_TARGET_PROPERTIES(hello_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+set(LIBHELLO_SRC hello.c)
+add_library(hello SHARED ${LIBHELLO_SRC})
+add_library(hello_static STATIC ${LIBHELLO_SRC})
+
+set_target_properties(hello_static PROPERTIES OUTPUT_NAME "hello")
+set_target_properties(hello PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(hello_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 
 set_target_properties(hello PROPERTIES VERSION 1.2 SOVERSION 1)
 
-install(TARGETS hello hello_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+install(TARGETS hello hello_static 
+	LIBRARY DESTINATION lib 
+	ARCHIVE DESTINATION lib)
 install(FILES hello.h DESTINATION include/hello)

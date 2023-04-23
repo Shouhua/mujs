@@ -61,6 +61,7 @@ SRCS = \
 	jsloop.c \
 	jstimer.c \
 	jsxhr.c \
+	jstask.c \
 	regexp.c \
 	utf.c
 

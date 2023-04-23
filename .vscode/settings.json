@@ -12,6 +12,7 @@
 		"stat.h": "c",
 		"string.h": "c",
 		"jsi.h": "c",
-		"visibility.h": "c"
+		"visibility.h": "c",
+		"dbus.h": "c"
 	}
 }

@@ -12,6 +12,9 @@ queueMicrotask(function(){
 	}, 10)
 })
 console.log('middle')
+setTimeout(function(){
+	console.log(0)
+}, 11)
 queueMicrotask(function(){
 	console.log('microtask2')
 	setTimeout(function(){

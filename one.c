@@ -24,5 +24,6 @@
 #include "jsloop.c"
 #include "jstimer.c"
 #include "jsxhr.c"
+#include "jstask.c"
 #include "regexp.c"
 #include "utf.c"

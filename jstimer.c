@@ -14,7 +14,10 @@ static void free_timer_ctx(timer_ctx *ctx)
 	ctx->base = NULL;
 	ctx->ev = NULL;
 	free(ctx->func);
-	free(ctx->argv);
+	for(size_t i=0; i<ctx->argc; i++)
+	{
+		free(ctx->argv+i);
+	}
 	free(ctx);
 }
 
@@ -48,7 +51,11 @@ static void timer_cb(int fd, short int flags, void *userdata)
 	}
 	if(js_pcall(J, ctx->argc))
 	{
-		fprintf(stderr, "定时器任务运行报错");
+		fprintf(stderr, "定时器任务运行报错, id: %ld\n", ctx->id);
+	}
+	if(!ctx->is_interval)
+	{
+		event_del(ctx->ev);
 	}
 }
 
@@ -88,11 +95,27 @@ static void register_timer(js_State *J, short is_interval)
 	memcpy(ctx->func, js_tovalue(J, 1), sizeof(js_Value));
 
 	short flags = EV_TIMEOUT;
+	ctx->is_interval = 0;
 	if(is_interval)	
 	{
 		flags |= EV_PERSIST;
+		ctx->is_interval = 1;
 	}
 	ctx->ev = event_new(base, -1, flags, timer_cb, ctx);
+
+	timer_ctx *tmp = ctx->next;
+	int count = 0;
+	ctx->time = millis;
+	while(tmp)
+	{
+		if(tmp->time == millis)
+		{
+			count++;
+		}
+		tmp = tmp->next;	
+	}
+	tv.tv_usec += count;
+
 	event_add(ctx->ev, &tv);
 
 	// return timer id
