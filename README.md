@@ -15,7 +15,7 @@ make debug
 - setInterval
 - clearTimeout
 - clearInterval  
-**需要注意的是libevent使用最小堆方式存放timer，导致部分情况下执行顺序问题，见[例子](./note/demo/libuv/simple.c)，为了实现有序，对于相同时间事件在代码中添加了n纳秒(n为出现次数)**
+**需要注意的是libevent使用最小堆方式存放timer，导致部分情况下执行顺序问题，见[例子](./note/demo/libuv/simple.c)，为了实现有序，对于相同时间事件在代码中添加了n微秒(n为出现次数)**
 2. XHRHttpRequest
 接口主要代码见 [jsxhr.c](./jsxhr.c)，没有实现event相关，主要实现的接口有
 - open
