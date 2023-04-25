@@ -25,9 +25,10 @@ shell脚本语言时动态作用域，这个在写脚本的时候要注意，所
 ### gcc -pedantic -Wall -Wextra
 -pedantic表示尽可能遵守C标准，但是并不能完全保证，所以可以添加下后面2个flag(pedantic英文为学究的，迂腐的)
 ### Flex处理二义性
-二义性，相同的sh可能被多个不同的模式匹配，使用以下规则解决
+二义性，相同的输入可能被多个不同的模式匹配，比如1-2+3,可以是1-（2+3），也可以是（1-2）+3, 使用以下规则解决
 - 词法分析器匹配输入时匹配尽可能多的字符串
 - 如果两个模式可以匹配的话，匹配在程序中更早出现的模式
+### bison处理优先级和结合性
 优先级和结合性(precedence and associativity), 以下是显式定义
 %left '+' '-'
 %left '*' '/'
@@ -92,6 +93,7 @@ __attribute__((no_return))
 ### PRINTLIKE
 GCC可以帮忙检查类似printf函数的fmt和args类型，详见mujs.h中的定义
 ## Unicode
+utf-32, utf-16, utf-8先后出现
 将所有文字使用0-4个字节的code point表示，好比是使用一个数字表示字符</br>
 - utf(Unicode Transfer Format)，但是我们要在网络间传输或者保存字符，出现很多unicode的编码方式，比如utf-8, utf-16等</br>
 - utf-8, 变长编码方式，使用1-4个字节表示，没有字节序考虑，因为需要每次解析一个字节，兼容ASCII
@@ -114,7 +116,7 @@ TODO 比如1+2*3，是怎么运行的
 ### [object transient](https://fulmicoton.com/posts/transient/)
 表示序列化时候比如toJSON时候是否显示
 ### function调用
-先this，再params
+先this，再params, 可以使用gettop(J)获取函数个数当然还要减去this
 ### 字典（hashmap）
 
 ### Closure

@@ -8,5 +8,5 @@ MESSAGE(STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR})
 
 FIND_LIBRARY(libhello hello /tmp/t3/lib)
 IF(libhello)
-MESSAGE(STATUS "libhello目录为: " ${libhello})
+	MESSAGE(STATUS "libhello目录为: " ${libhello})
 endif(libhello)

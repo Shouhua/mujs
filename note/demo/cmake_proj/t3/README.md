@@ -1,0 +1,1 @@
+如何生成动态库，静态库，设置动态库属性，包括OUTPUT_NAME，VERSION, SOVERSION等

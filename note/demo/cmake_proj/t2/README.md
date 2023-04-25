@@ -1,0 +1,1 @@
+主要练习install功能，包括PROGRAMS, TARGETS, FILES, DIRECTORY等
