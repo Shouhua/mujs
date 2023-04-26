@@ -16,6 +16,7 @@
 #include <event2/event.h>
 #include <curl/curl.h>
 #include <ctype.h>
+#include "list.h"
 
 /* NOTE: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103052 */
 #ifdef __GNUC__
@@ -481,15 +482,22 @@ typedef struct curl_socket_s
 
 
 /* jstimer.c */
+typedef struct
+{
+	js_Value *v;
+	struct list_head link;
+} timer_argv;
+
 typedef struct timer_ctx
 {
+	struct list_head link;
 	js_State *J;
 	struct event_base *base;
 	struct event *ev;
 	size_t id;
 	js_Value *func; // timer callback
 	size_t argc;
-	js_Value *argv; // 参数链表
+	struct list_head argv_list;
 	int is_interval;
 	long time;
 	struct timer_ctx *next;
@@ -498,21 +506,24 @@ typedef struct timer_ctx
 struct micro_task 
 {
 	js_Object *fn;
-	struct micro_task *next;
+	struct list_head link;
 };
 typedef struct micro_task micro_task;
 struct js_Loop {
+	js_State *J;
+	char *filename;
+
 	struct event_base *base;
-	timer_ctx *timer_list; // setInterval, setTimeout事件列表
+
+	struct list_head timer_list; // setInterval, setTimeout事件列表
+	size_t timer_id;
+
 	CURLM *multi_handle; // xhr异步curl multi handle
 	CURL *easy_handle;
 	struct event *curlm_timeout; // xhr异步timout事件
-	micro_task *micro_list;
-	micro_task *micro_list_tail;
-	struct event *micro_event;
 
-	js_State *J;
-	char *filename;
+	struct list_head micro_list;
+	struct event *micro_event;
 };
 
 typedef void (*curl_done_cb)(CURLcode result, void *arg);
@@ -533,8 +544,6 @@ typedef struct
     content_t *bbuf; // body content buffer
     size_t blen;
     curl_done_cb done_cb;
-    // CURL *handle; // curl easy handle
-	// CURLM *curlm_handle;
     unsigned short ready_state; // xhr ready_state
 	int sent;
 	int status;
@@ -962,9 +971,11 @@ void jsB_inittimer(js_State *J);
 void jsB_initxhr(js_State *J);
 void jsB_initcurl(js_Loop *loop);
 void js_freexhr(js_Loop *loop);
-void execute_jobs(js_State *J); // 宏任务执行前指向微任务
+void execute_jobs(js_State *J); // 宏任务执行前先执行微任务队列
 void jsB_inittask(js_State *loop);
 void jsB_initjob(js_Loop *loop);
+void js_freetimer(js_Loop *loop);
+void js_freetask(js_Loop *loop);
 
 void jsB_propf(js_State *J, const char *name, js_CFunction cfun, int n);
 void jsB_propn(js_State *J, const char *name, double number);

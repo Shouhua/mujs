@@ -587,6 +587,7 @@ void jsB_initxhr(js_State *J)
 
 void jsB_initcurl(js_Loop *loop)
 {
+    curl_global_init(CURL_GLOBAL_ALL);
     if(!loop->multi_handle)
     {
         loop->multi_handle = curl_multi_init();
@@ -609,4 +610,5 @@ void js_freexhr(js_Loop *loop)
         curl_multi_cleanup(loop->multi_handle);
     if(loop->easy_handle)
         curl_easy_cleanup(loop->easy_handle);
+    curl_global_cleanup();
 }

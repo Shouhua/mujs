@@ -31,7 +31,7 @@ ifeq ($(shell uname),FreeBSD)
   CFLAGS += -I/usr/local/include -L/usr/local/lib
 endif
 
-HDRS = mujs.h jsi.h regexp.h utf.h astnames.h opnames.h
+HDRS = mujs.h jsi.h regexp.h utf.h astnames.h opnames.h list.h
 
 #regexp里面#define next regnext，文件放在此行后面会报错
 SRCS = \

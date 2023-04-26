@@ -317,8 +317,6 @@ main(int argc, char **argv)
 		exit(1);
 	}
 
-	loop = js_newloop(J);
-
 	js_newcfunction(J, jsB_gc, "gc", 0);
 	js_setglobal(J, "gc");
 
@@ -365,7 +363,9 @@ main(int argc, char **argv)
 
 		// if (js_dofile(J, argv[c]))
 		// 	status = 1;
-		js_runloop(loop, argv[c]);
+
+		loop = js_newloop(J, argv[c]);
+		js_runloop(loop);
 	}
 
 	if (interactive) {

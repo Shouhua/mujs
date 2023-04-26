@@ -7,8 +7,8 @@ var i2 = setInterval(function() {
 	console.log('interval: 1000ms')
 }, 1000)
 var xhr = new XMLHttpRequest()
-// var url = 'https://jsonplaceholder.typicode.com/todos/1'
-var url = 'http://192.168.126.128:3000/api'
+var url = 'https://jsonplaceholder.typicode.com/todos/1'
+// var url = 'http://192.168.126.128:3000/api'
 // var url = 'https://www.baidu.com'
 // xhr.open('GET', url)
 console.log('Begin request...')

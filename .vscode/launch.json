@@ -5,11 +5,11 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "microtask",
+			"name": "timer",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
-			"args": ["${workspaceFolder}/note/demo/microtask.js"],
+			"args": ["${workspaceFolder}/note/demo/timer.js"],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],

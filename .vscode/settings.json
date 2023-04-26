@@ -13,6 +13,8 @@
 		"string.h": "c",
 		"jsi.h": "c",
 		"visibility.h": "c",
-		"dbus.h": "c"
+		"dbus.h": "c",
+		"cstdlib": "c",
+		"memory": "c"
 	}
 }
