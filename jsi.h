@@ -548,6 +548,8 @@ typedef struct
 	int sent;
 	int status;
 	js_Object *events[XHR_EVENT_MAX];
+	
+	struct curl_slist *slist;
 } req_ctx;
 
 /* jsrun.c */

@@ -9,15 +9,15 @@ static void curl_perform(int fd, short event, void *arg);
 
 char* strdup (const char* s)
 {
-  size_t slen = strlen(s);
-  char* result = malloc(slen + 1);
-  if(result == NULL)
-  {
-    return NULL;
-  }
+    size_t slen = strlen(s);
+    char* result = malloc(slen + 1);
+    if(result == NULL)
+    {
+        return NULL;
+    }
 
-  memcpy(result, s, slen+1);
-  return result;
+    memcpy(result, s, slen+1);
+    return result;
 }
 
 static int start_timeout(CURLM *multi, long timeout_ms, void *userp)
@@ -308,6 +308,11 @@ static void request_done_cb(CURLcode result, void *arg)
         free(ctx->url);
         ctx->url = strdup(done_url);
     }
+    if(ctx->slist)
+    {
+        curl_slist_free_all(ctx->slist);
+        ctx->slist = NULL;
+    }
     ctx->ready_state = XHR_RSTATE_DONE;
     maybe_emit_event(ctx, XHR_EVENT_READY_STATE_CHANGED);
 
@@ -319,7 +324,7 @@ static void request_done_cb(CURLcode result, void *arg)
     {
         if(result != CURLE_OK)
         {
-            fprintf(stderr, "下载出现问题：%d\n", result);
+            fprintf(stderr, "下载出现问题：%d, code查阅CURLcode\n", result);
             maybe_emit_event(ctx, XHR_EVENT_ERROR);
         }
         else
@@ -350,8 +355,14 @@ static req_ctx * register_request(const char *method,
     ctx->sent = 0;
     ctx->timeout = 0;
     ctx->response_type = XHR_RTYPE_DEFAULT; // default means text
+    ctx->slist = NULL;
 
     ctx->ready_state = XHR_RSTATE_UNSENT;
+    if(ctx->slist)
+    {
+        curl_slist_free_all(ctx->slist);
+    }
+    ctx->slist = NULL;
     for(int i = 0; i<XHR_EVENT_MAX; i++)
     {
         ctx->events[i] = NULL;
@@ -431,16 +442,135 @@ static void Xp_send(js_State *J)
     js_Loop *loop = js_getcontext(J);
 	js_Object *self = js_toobject(J, 0); // this
     req_ctx *ctx = (req_ctx *)self->u.c.data;
-    if(ctx->async)
+    if(!ctx)
     {
-        curl_multi_add_handle(loop->multi_handle, loop->easy_handle);
+        js_error(J, "request ctx上下文不存在，没有open");
+    }
+    if(!ctx->sent)
+    {
+        int n = js_gettop(J);
+        if(n == 2 && js_isstring(J, -1))
+        {
+            char *body = js_tostring(J, -1);
+            if(body)
+            {
+                curl_easy_setopt(loop->easy_handle, CURLOPT_POSTFIELDSIZE, strlen(body));
+                curl_easy_setopt(loop->easy_handle, CURLOPT_COPYPOSTFIELDS, body);
+            }
+        }
+        if(ctx->slist)
+        {
+            curl_easy_setopt(loop->easy_handle, CURLOPT_HTTPHEADER, ctx->slist);
+        }
+        if(ctx->async)
+        {
+            curl_multi_add_handle(loop->multi_handle, loop->easy_handle);
+        }
+        else
+        {
+            CURLcode result = curl_easy_perform(loop->easy_handle);
+            request_done_cb(result, ctx);
+        }
+        ctx->sent = 1;
+    } 
+}
+
+static void Xp_setRequestHeader(js_State *J)
+{
+	js_Object *self;
+    req_ctx *ctx;
+    const char *header_name, *header_value = NULL;
+    char header[CURL_MAX_HTTP_HEADER];
+
+    self = js_toobject(J, 0); // this
+    ctx = (req_ctx *)self->u.c.data;
+
+    if(ctx->sent)
+    {
+        js_error(J, "setRequestHeader应该在open和send之间使用");
+    }
+
+    header_name = js_tostring(J, 1);
+    if(!js_isundefined(J, 2))
+    {
+        header_value = js_tostring(J, 2);
+    }
+    if(header_value)
+    {
+        snprintf(header, sizeof(header), "%s: %s", header_name, header_value);
     }
     else
     {
-        CURLcode result = curl_easy_perform(loop->easy_handle);
-        request_done_cb(result, ctx);
+        snprintf(header, sizeof(header), "%s;", header_name);
     }
-    ctx->sent = 1;
+    struct curl_slist *list = curl_slist_append(ctx->slist, header);
+    if(list)
+    {
+        ctx->slist = list;
+    }
+    js_pushundefined(J);
+}
+
+static void Xp_getResponseHeader(js_State *J)
+{
+	js_Object *self = js_toobject(J, 0); // this
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    char *result = NULL;
+    size_t result_size = 0;
+
+    if(!ctx)
+    {
+        js_error(J, "request ctx上下文不存在，没有open");
+    }
+    if(ctx->hlen == 0)
+    {
+        js_pushnull(J);
+        return;
+    }
+    const char *header_name = js_tostring(J, 1);
+    if(!header_name)
+    {
+        js_error(J, "header不存在");
+    }
+    for(char *tmp = (char *)header_name; *tmp; tmp++)
+        *tmp = tolower(*tmp);
+    char *ptr = (char *)ctx->hbuf;
+    for(;;)
+    {
+        char *tmp = strstr(ptr, header_name);
+        if(!tmp)
+            break;
+        char *p = strchr(tmp, '\r');
+        if(!p)
+            break;
+        char *p1 = memchr(tmp, ':', p - tmp);
+        if(p1)
+        {
+            p1++;
+            for(; *p1 == ' '; ++p1)
+                ;
+            // p1 now points to the start of the header value
+            // check if it was a header without a value like x-foo:\r\n
+            size_t size = p - p1;
+            if (size > 0) {
+                result = realloc(result, result_size+size+2);
+                memcpy(result+result_size, p1, size);
+                *(result+result_size+size) = ',';
+                *(result+result_size+size+1) = ' ';
+                result_size += (size+2);
+            }
+        }
+        ptr = p;
+    }
+    if(!result)
+    {
+        js_pushnull(J);
+        return;
+    }
+    *(result+result_size-2) = '\0';
+    js_newstring(J, result);
+    free(result);
+    return;
 }
 
 static void Xp_response_type_getter(js_State *J)
@@ -469,12 +599,16 @@ static void Xp_response_type_getter(js_State *J)
 }
 static void Xp_response_type_setter(js_State *J)
 {
+	js_Object *self = js_toobject(J, 0); // this
+    req_ctx *ctx = (req_ctx *)self->u.c.data;
+    if(!ctx->async)
+    {
+        js_syntaxerror(J, "同步请求不能设置response type\n");
+    }
     static const char array_buffer[] = "arraybuffer";
     static const char json[] = "json";
     static const char text[] = "text";
 
-	js_Object *self = js_toobject(J, 0); // this
-    req_ctx *ctx = (req_ctx *)self->u.c.data;
     const char *v = js_tostring(J, -1);
     if(v)
     {
@@ -556,6 +690,8 @@ void jsB_initxhr(js_State *J)
 	{
 		jsB_propf(J, "XMLHttpRequest.prototype.open", Xp_open, 2); // 2代表最小参数个数
 		jsB_propf(J, "XMLHttpRequest.prototype.send", Xp_send, 0);
+		jsB_propf(J, "XMLHttpRequest.prototype.setRequestHeader", Xp_setRequestHeader, 2);
+		jsB_propf(J, "XMLHttpRequest.prototype.getResponseHeader", Xp_getResponseHeader, 1);
 
         js_newcfunction(J, Xp_response_getter, "response", 0);
         js_pushnull(J);

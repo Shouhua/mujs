@@ -1,5 +1,5 @@
 ## 关于
-本工程fork自官方的mujs库，主要用于学习js引擎相关内容，引入libevent和libcurl，实现了简单的timer、xhr、queueMicrotask等接口, 例子可以参见 [xhr.js](./note/demo/xhr.js), [microtask.js](./note/demo/microtask.js)等  
+本工程fork自官方的mujs库，主要用于学习js引擎相关内容，引入libevent和libcurl，实现了简单的timer, xhr, queueMicrotask, promise等接口, 例子可以参见 [xhr.js](./note/demo/xhr.js), [microtask.js](./note/demo/microtask.js)等  
 根目录makefile有更新，主要是添加相关库依赖
 ## 执行
 ```shell
@@ -18,17 +18,21 @@ make debug
 **需要注意的是libevent使用最小堆方式存放timer，导致部分情况下执行顺序问题，见[例子](./note/demo/libuv/simple.c)，为了实现有序，对于相同时间事件在代码中添加了n微秒(n为出现次数)**
 2. XHRHttpRequest
 接口主要代码见 [jsxhr.c](./jsxhr.c)，没有实现event相关，主要实现的接口有
-- open
+- open(HTTP_VERB, url, is_async), 支持GET，POST，使用send(body)传递json数据
 - onload
-- send
+- send()
 - timeout
 - ontimeout
 - response
 - responseType
 - onprogress 虽然没有提供event参数，但是lengthComputable, loaded, total值已经实现
 - new XHRHttpRequest()
+- getResponseHeader(name)
+- setRequestHeader(name, value)
 3. queueMicrotask
 接口见代码[jstask.c](./jstask.c), 例子见[microtask.js](./note/demo/microtask.js)
+4. promise polyfill
+详情见promise.js实现
 
 ## 作者的README
 MuJS: an embeddable Javascript interpreter in C.

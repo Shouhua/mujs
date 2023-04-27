@@ -1,5 +1,4 @@
 #include "jsi.h"
-#include <string.h>
 
 static void free_timer_ctx(timer_ctx *ctx)
 {

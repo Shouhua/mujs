@@ -5,11 +5,11 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "timer",
+			"name": "promise",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
-			"args": ["${workspaceFolder}/note/demo/timer.js"],
+			"args": ["${workspaceFolder}/note/demo/promise.js"],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],

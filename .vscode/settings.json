@@ -15,6 +15,7 @@
 		"visibility.h": "c",
 		"dbus.h": "c",
 		"cstdlib": "c",
-		"memory": "c"
+		"memory": "c",
+		"unistd.h": "c"
 	}
 }
