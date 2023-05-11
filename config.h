@@ -1,0 +1,3 @@
+#define JS_VERSION_MAJOR 1
+#define JS_VERSION_MINOR 3
+#define JS_VERSION_PATCH 2

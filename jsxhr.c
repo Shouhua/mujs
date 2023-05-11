@@ -451,7 +451,7 @@ static void Xp_send(js_State *J)
         int n = js_gettop(J);
         if(n == 2 && js_isstring(J, -1))
         {
-            char *body = js_tostring(J, -1);
+            const char *body = js_tostring(J, -1);
             if(body)
             {
                 curl_easy_setopt(loop->easy_handle, CURLOPT_POSTFIELDSIZE, strlen(body));

@@ -12,3 +12,4 @@ user.make
 .vimrc
 
 node_modules
+cmake_build

@@ -1,3 +1,16 @@
+## 2023-05-11
+cmake execute_process运行在generation阶段(cmake命令执行)，add_custom_command运行在compilation阶段(make命令执行); 比如在build阶段，根据某些文件生成中间文件，可以使用add_custom_command，依赖文件没有更新，就不会执行；另外后者可以选择在何时，比如build前后执行;前者更偏向于每次都执行的命令，比如根据git tag获取版本，两者的区别可以慢慢领会
+## 2023-05-10
+1. (-fsanitize=address)[https://github.com/hellogcc/100-gcc-tips/blob/master/src/address-sanitizer.md], 运行时检测比如数组越界访问等内存问题
+2. (-fno-omit-frame-pointer/-fomit-frame-pointer)[https://breezetemple.github.io/2020/02/26/gcc-options-fomit-frame-pointer/], 编译是否保存stack frame用于调试调用栈, **使用-O0的时候会保存调试信息，及默认-fno-omit-frame-pointer**
+3. cmake set/unset
+详情见(set官方文档)[https://cmake.org/cmake/help/latest/command/set.html]
+- set normal vairable
+```set(<variable> <value>... [PARENT_SCOPE])``` 这种情况下相当于局部变量
+- set cache entry
+```set(<variable> <value>... CACHE <type> <docstring> [FORCE])``` 设置全局变量，变量将放在CMakeCache.txt文件中，如果要覆盖，需要设置FORCE参数，cmake自有变量会默认放在cache文件中，比如CMAKE_BUILD_TYPE，如果不设置，cache文件中值为空；另外，使用-DHello=world也会放在cache文件中
+- set environment variable
+```set(ENV{<variable>} [<value>])```
 ## 2023-04-12
 1. c函数中获取js调用传递函数参数时的argc和argv，注册时候要注意写入最小参数个数，这个在调用时会补全，如果写的时全量的参数个数，永远补全就不能获取动态argc了，详细可以参考Xp_open函数获取第三个async参数。argc确定后，不同类型的argv使用不同的方法获取，比如boolean使用js_toboolean(J, -1)
 2. 书籍和有用的website
