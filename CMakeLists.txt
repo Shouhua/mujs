@@ -66,45 +66,75 @@ foreach(name ${OP_RAW_NAMES})
 endforeach()
 list(APPEND INCLUDE ${OP_HEADER_FILE})
 
-find_package(Python3 REQUIRED)
-find_package(CURL REQUIRED)
-if(CURL_FOUND AND Python3_FOUND)
-	set(UNICODE_DATA_FILE "UnicodeData.txt")
-	set(UTF_DATA_HEADER "utfdata.h")
-	execute_process(
-		COMMAND
-			curl -s -o ${UNICODE_DATA_FILE} "https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt"
-		WORKING_DIRECTORY 
-			${CMAKE_SOURCE_DIR}
-	)
-	execute_process(
-		COMMAND
-			${Python3_EXECUTABLE} genucd.py ${UNICODE_DATA_FILE}
-		WORKING_DIRECTORY 
-			${CMAKE_SOURCE_DIR}
-		OUTPUT_FILE "${UTF_DATA_HEADER}"
-	)
-	list(APPEND INCLUDE "${UTF_DATA_HEADER}")
-else()
-	message(FATAL_ERROR "please install curl and python3")
-endif()
+# find_package(Python3 REQUIRED)
+# find_package(CURL REQUIRED)
+# if(CURL_FOUND AND Python3_FOUND)
+# 	set(UNICODE_DATA_FILE "UnicodeData.txt")
+# 	set(UTF_DATA_HEADER "utfdata.h")
+# 	execute_process(
+# 		COMMAND
+# 			curl -s -o ${UNICODE_DATA_FILE} "https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt"
+# 		WORKING_DIRECTORY 
+# 			${CMAKE_SOURCE_DIR}
+# 	)
+# 	execute_process(
+# 		COMMAND
+# 			${Python3_EXECUTABLE} genucd.py ${UNICODE_DATA_FILE}
+# 		WORKING_DIRECTORY 
+# 			${CMAKE_SOURCE_DIR}
+# 		OUTPUT_FILE "${UTF_DATA_HEADER}"
+# 	)
+# 	list(APPEND INCLUDE "${UTF_DATA_HEADER}")
+# else()
+# 	message(FATAL_ERROR "please install curl and python3")
+# endif()
 
 set(CMAKE_C_FLAGS "-pedantic -Wall -Wextra -Wno-unused-parameter")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-message(STATUS "TYPE: ${CMAKE_BUILD_TYPE}")
+	find_package(Python3 REQUIRED)
+	find_package(CURL REQUIRED)
+	if(CURL_FOUND AND Python3_FOUND)
+		set(UNICODE_DATA_FILE "UnicodeData.txt")
+		set(UTF_DATA_HEADER "utfdata.h")
+		add_custom_command(
+			OUTPUT ${UNICODE_DATA_FILE}
+			COMMAND curl -s -o ${UNICODE_DATA_FILE} "https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt"
+			# WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			VERBATIM
+		)
+		add_custom_command(
+			OUTPUT "${UTF_DATA_HEADER}"
+			COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/genucd.py" ${UNICODE_DATA_FILE} > ${UTF_DATA_HEADER}
+			DEPENDS ${UNICODE_DATA_FILE}
+			# WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			VERBATIM
+		)
+		add_custom_target(generate_utf_header DEPENDS ${UTF_DATA_HEADER})
+	else()
+		message(FATAL_ERROR "please install curl and python3")
+	endif()
+
 	set(DEBUG_EXE "mujs-debug")
 	add_library("${DEBUG_EXE}_shared" SHARED ${SRC} ${INCLUDE})
-	add_library("${DEBUG_EXE}_static" STATIC ${SRC} ${INCLUDE})
 	set_target_properties("${DEBUG_EXE}_shared" PROPERTIES OUTPUT_NAME "${DEBUG_EXE}")
-	set_target_properties("${DEBUG_EXE}_static" PROPERTIES OUTPUT_NAME "${DEBUG_EXE}")
 	set_target_properties("${DEBUG_EXE}_shared" PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${JS_VERSION_MAJOR})
+	target_include_directories("${DEBUG_EXE}_shared" PRIVATE ${CMAKE_BINARY_DIR})
+	target_compile_options("${DEBUG_EXE}_shared" PRIVATE -shared PRIVATE -fPIC)
+
+	add_library("${DEBUG_EXE}_static" STATIC ${SRC} ${INCLUDE})
+	set_target_properties("${DEBUG_EXE}_static" PROPERTIES OUTPUT_NAME "${DEBUG_EXE}")
+	target_include_directories("${DEBUG_EXE}_static" PRIVATE ${CMAKE_BINARY_DIR})
 
 	list(APPEND SRC main.c)
 	add_executable("${DEBUG_EXE}" ${SRC} ${INCLUDE})
+	add_dependencies("${DEBUG_EXE}" generate_utf_header)
+	add_dependencies("${DEBUG_EXE}_shared" generate_utf_header)
+	add_dependencies("${DEBUG_EXE}_static" generate_utf_header)
 	target_compile_definitions("${DEBUG_EXE}" PRIVATE READLINE)
 	target_compile_options("${DEBUG_EXE}" PRIVATE -g PRIVATE -fPIC)
 	target_link_libraries("${DEBUG_EXE}" PRIVATE event curl readline m)
+	target_include_directories("${DEBUG_EXE}" PRIVATE ${CMAKE_BINARY_DIR})
 
 	set(CMAKE_INSTALL_PREFIX "/tmp/mujs")
 	install(TARGETS "${DEBUG_EXE}_shared" "${DEBUG_EXE}_static" "${DEBUG_EXE}"
