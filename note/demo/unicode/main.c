@@ -1,4 +1,5 @@
-#include "../../../utf.h"
+// #include "../../../utf.h"
+#include "include/utf.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +17,7 @@ int main (int argc, char *argv[]) {
 	c = "\U0001f525";
 	len = chartorune(r, c);
 	printf("\U0001f525 len: %d, Rune: 0x%x, utflen: %d, runelen: %d\n", len, *r, utflen(c), runelen(r));
+	printf("\\u1f52: utflen: %d\n", utflen("\u1f52"));
 	// TODO 为什么不行
 	// c = "\u0045";
 	// len = chartorune(r, c);
