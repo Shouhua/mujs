@@ -1,3 +1,9 @@
+## 2023-05-17
+- this  
+jsrun.c->jsR_run->OP_THIS，可以看到this代表执行时调用object
+- JS_CCFUNCTION/JS_CFUNCTION  
+JS_CCFUNCTION，c语言的函数，调用时直接调用c code，c code使用时注意传参和返参使用方式，比如js_gettop等; 区别举个例子比如```jserror.c->Ep_toString```，默认是```Error.prototype.toString```的c执行函数，使用```main.c->js_dostring(J, stacktrace_js)```使用js修改```Error.prototype.toString```后，变成了JS_CFUNCTION
+JS_CFUNCTION，js的function，运行时已经时opcode了，同上面举得例子
 ## 2023-05-11
 1. cmake execute_process运行在generation阶段(cmake命令执行)，add_custom_command运行在compilation阶段(make命令执行); 比如在build阶段；根据某些文件生成中间文件，可以使用add_custom_command，依赖文件没有更新，就不会执行；另外后者可以选择在何时，比如build前后执行;前者更偏向于每次都执行的命令，比如根据git tag获取版本，两者的区别可以慢慢领会。
 2. 两者使用可以参见根目录下的CMakeLists.txt中生成utfdata.h头文件，开始使用execute_process在配置阶段，每次都会重新生成下；后面改成使用add_custom_command在make执行阶段生成，这样在文件修改后不会每次生成。起始感觉都一样，因为cmake命令也不是每次执行，但是意义有些不一样，另外使用execute_process可以输出为变量，见version填充。
@@ -126,7 +132,7 @@ utf-32, utf-16, utf-8先后出现
 ### precedence
 TODO 比如1+2*3，是怎么运行的
 ### [Sparse Array and Dense Array](https://www.freecodecamp.org/news/sparse-and-dense-arrays-in-javascript/)
-普通的从0开始连续的数组是Dense Array，比如```var a=[1,2,3]```，比如```let a = []; a[100]=1;```这种就是sparse array。在```jsi.h```定义```js_Object```种使用count跟这个主题有关系
+普通的从0开始连续的数组是Dense Array，比如```var a=[1,2,3]```，比如```let a = []; a[100]=1;```这种就是sparse array。在```jsi.h```定义```js_Object```中使用count跟这个主题有关系
 ### [object transient](https://fulmicoton.com/posts/transient/)
 表示序列化时候比如toJSON时候是否显示
 ### function调用

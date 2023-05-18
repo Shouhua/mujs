@@ -105,9 +105,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		)
 		add_custom_command(
 			OUTPUT "${UTF_DATA_HEADER}"
-			COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/genucd.py" ${UNICODE_DATA_FILE} > ${UTF_DATA_HEADER}
+			COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/genucd.py" "${CMAKE_BINARY_DIR}/${UNICODE_DATA_FILE}" > ${UTF_DATA_HEADER}
 			DEPENDS ${UNICODE_DATA_FILE}
-			# WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 			VERBATIM
 		)
 		add_custom_target(generate_utf_header DEPENDS ${UTF_DATA_HEADER})
@@ -119,12 +119,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_library("${DEBUG_EXE}_shared" SHARED ${SRC} ${INCLUDE})
 	set_target_properties("${DEBUG_EXE}_shared" PROPERTIES OUTPUT_NAME "${DEBUG_EXE}")
 	set_target_properties("${DEBUG_EXE}_shared" PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${JS_VERSION_MAJOR})
-	target_include_directories("${DEBUG_EXE}_shared" PRIVATE ${CMAKE_BINARY_DIR})
+	# target_include_directories("${DEBUG_EXE}_shared" PRIVATE ${CMAKE_BINARY_DIR})
 	target_compile_options("${DEBUG_EXE}_shared" PRIVATE -shared PRIVATE -fPIC)
 
 	add_library("${DEBUG_EXE}_static" STATIC ${SRC} ${INCLUDE})
 	set_target_properties("${DEBUG_EXE}_static" PROPERTIES OUTPUT_NAME "${DEBUG_EXE}")
-	target_include_directories("${DEBUG_EXE}_static" PRIVATE ${CMAKE_BINARY_DIR})
+	# target_include_directories("${DEBUG_EXE}_static" PRIVATE ${CMAKE_BINARY_DIR})
 
 	list(APPEND SRC main.c)
 	add_executable("${DEBUG_EXE}" ${SRC} ${INCLUDE})
@@ -134,7 +134,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_definitions("${DEBUG_EXE}" PRIVATE READLINE)
 	target_compile_options("${DEBUG_EXE}" PRIVATE -g PRIVATE -fPIC)
 	target_link_libraries("${DEBUG_EXE}" PRIVATE event curl readline m)
-	target_include_directories("${DEBUG_EXE}" PRIVATE ${CMAKE_BINARY_DIR})
+	# target_include_directories("${DEBUG_EXE}" PRIVATE ${CMAKE_BINARY_DIR})
 
 	set(CMAKE_INSTALL_PREFIX "/tmp/mujs")
 	install(TARGETS "${DEBUG_EXE}_shared" "${DEBUG_EXE}_static" "${DEBUG_EXE}"

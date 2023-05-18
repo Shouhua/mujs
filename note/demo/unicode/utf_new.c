@@ -11,4 +11,8 @@ int main (int argc, char *argv[]) {
 	memset(c, 0, 4);
 	runetochar(c, &r);
 	printf("0x%02x 0x%x 0x%x 0x%x\n", (unsigned char)c[0], (unsigned char)c[1], (unsigned char)c[2], (unsigned char)c[3]);
+	printf("%s\n", c);
+
+	len = chartorune(&r, "hello");
+	printf("hello len: %d, 0x%x\n", len, r);
 }

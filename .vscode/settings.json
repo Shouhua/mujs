@@ -16,6 +16,7 @@
 		"dbus.h": "c",
 		"cstdlib": "c",
 		"memory": "c",
-		"unistd.h": "c"
+		"unistd.h": "c",
+		"utf.h": "c"
 	}
 }
