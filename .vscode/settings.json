@@ -17,6 +17,7 @@
 		"cstdlib": "c",
 		"memory": "c",
 		"unistd.h": "c",
-		"utf.h": "c"
+		"utf.h": "c",
+		"cerrno": "c"
 	}
 }
