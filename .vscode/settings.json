@@ -18,6 +18,7 @@
 		"memory": "c",
 		"unistd.h": "c",
 		"utf.h": "c",
-		"cerrno": "c"
+		"cerrno": "c",
+		"stdint.h": "c"
 	}
 }

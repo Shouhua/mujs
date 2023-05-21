@@ -6,14 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define UTF8_MAX 4
-#define UNICODE_MAX 0x10FFFFF
-
-typedef enum
-{
-	BIG,
-	LITTLE
-} Endian;
+#include "utf.h"
 
 typedef union
 {
@@ -156,8 +149,8 @@ int unicodetoutf8(uint8_t *utf8, uint32_t code_point)
 	{
 		size = 2;
 		// 110y yyyy 10zz zzzz
+		utf8[1] = 0b10000000 | (code_point & 0x003f);
 		utf8[0] = 0b11000000 | (code_point >> 6);
-		utf8[1] = 0b11000000 | (code_point & 0x003f);
 		return size;
 	}
 	if(code_point < 0x10000) 
@@ -182,33 +175,47 @@ int unicodetoutf8(uint8_t *utf8, uint32_t code_point)
 	return -1;
 }
 
-int main()
+int utf8toutf16(uint16_t *utf16, uint8_t *utf8)
 {
-
-	uint8_t *utf8 = malloc(sizeof(uint8_t)*UTF8_MAX);
-	uint16_t *utf16 = malloc(sizeof(uint16_t)*2);
-	int size = 0;
-
-	uint32_t cp[] = {0x35, 0x370, 0xFE30, 0xFEFF, 0x1F60A};
-	for(int i = 0; i < (sizeof(cp) / sizeof(cp[0])); i++)
-	{
-		size = unicodetoutf8(utf8, cp[i]);
-		printf("utf8 size: %d, 0x%x 0x%x 0x%x 0x%x\n", size, utf8[0], utf8[1], utf8[2], utf8[3]);
-
-		size = unicodetoutf16(utf16, cp[i]);
-		printf("utf16 size: %d, 0x%x 0x%x\n", size, utf16[0], utf16[1]);
-	}
-
-	uint32_t code_point = 0;
-	*utf16 = 0xD950;
-	*(utf16+1) = 0xDF21;
-	size = utf16tounicode(&code_point, utf16);
-	printf("0x64321 utf16 to unicode: 0x%x\n", code_point);
-	*utf8 = 0x35;
-	*(utf8+1) = 0x9f;
-	*(utf8+2) = 0x98;
-	*(utf8+3) = 0x80;
-	size = utf8tounicode(&code_point, utf8);
-	printf("0x1F600 utf8 to unicode: 0x%x, len: %d\n", code_point, size);
-	return 0;
+	uint32_t code_point;
+	utf8tounicode(&code_point, utf8);
+	return unicodetoutf16(utf16, code_point);
 }
+
+int utf16toutf8(uint8_t utf8, uint16_t utf16)
+{
+	uint32_t code_point;
+	utf16tounicode(&code_point, utf16);
+	return unicodetoutf8(utf8, code_point);
+}
+
+// int main()
+// {
+
+// 	uint8_t *utf8 = malloc(sizeof(uint8_t)*UTF8_MAX);
+// 	uint16_t *utf16 = malloc(sizeof(uint16_t)*2);
+// 	int size = 0;
+
+// 	uint32_t cp[] = {0x35, 0x370, 0xFE30, 0xFEFF, 0x1F60A};
+// 	for(int i = 0; i < (sizeof(cp) / sizeof(cp[0])); i++)
+// 	{
+// 		size = unicodetoutf8(utf8, cp[i]);
+// 		printf("utf8 size: %d, 0x%x 0x%x 0x%x 0x%x\n", size, utf8[0], utf8[1], utf8[2], utf8[3]);
+
+// 		size = unicodetoutf16(utf16, cp[i]);
+// 		printf("utf16 size: %d, 0x%x 0x%x\n", size, utf16[0], utf16[1]);
+// 	}
+
+// 	uint32_t code_point = 0;
+// 	*utf16 = 0xD950;
+// 	*(utf16+1) = 0xDF21;
+// 	size = utf16tounicode(&code_point, utf16);
+// 	printf("0x64321 utf16 to unicode: 0x%x\n", code_point);
+// 	*utf8 = 0x35;
+// 	*(utf8+1) = 0x9f;
+// 	*(utf8+2) = 0x98;
+// 	*(utf8+3) = 0x80;
+// 	size = utf8tounicode(&code_point, utf8);
+// 	printf("0x1F600 utf8 to unicode: 0x%x, len: %d\n", code_point, size);
+// 	return 0;
+// }

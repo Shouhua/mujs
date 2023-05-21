@@ -7,6 +7,7 @@ JS_CFUNCTION，js的function，运行时已经时opcode了，同上面举得例�
 ## 2023-05-11
 1. cmake execute_process运行在generation阶段(cmake命令执行)，add_custom_command运行在compilation阶段(make命令执行); 比如在build阶段；根据某些文件生成中间文件，可以使用add_custom_command，依赖文件没有更新，就不会执行；另外后者可以选择在何时，比如build前后执行;前者更偏向于每次都执行的命令，比如根据git tag获取版本，两者的区别可以慢慢领会。
 2. 两者使用可以参见根目录下的CMakeLists.txt中生成utfdata.h头文件，开始使用execute_process在配置阶段，每次都会重新生成下；后面改成使用add_custom_command在make执行阶段生成，这样在文件修改后不会每次生成。起始感觉都一样，因为cmake命令也不是每次执行，但是意义有些不一样，另外使用execute_process可以输出为变量，见version填充。
+3. add_custom_command中的COMMAND参数一般使用```${CMAKE_COMMAND} -E echo "Hello, world!"```，这样会将后面的命令作为cmake脚本执行，如果不添加```${CMAKE_COMMAND} -E```会直接在机器上执行
 ## 2023-05-10
 1. (-fsanitize=address)[https://github.com/hellogcc/100-gcc-tips/blob/master/src/address-sanitizer.md], 运行时检测比如数组越界访问等内存问题
 2. (-fno-omit-frame-pointer/-fomit-frame-pointer)[https://breezetemple.github.io/2020/02/26/gcc-options-fomit-frame-pointer/], 编译是否保存stack frame用于调试调用栈, **使用-O0的时候会保存调试信息，及默认-fno-omit-frame-pointer**
