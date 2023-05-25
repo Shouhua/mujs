@@ -39,5 +39,16 @@ int main(int argc, char *argv[])
 		fprintf(stdout, "utf8 len: %d, 0x%x 0x%x 0x%x 0x%x\n", len, utf8[0], utf8[1], utf8[2], utf8[3]);
 	}
 	fclose(f);
+	utf16[0] = 0xD801;
+	utf16[1] = 0xDC37;
+	len = utf16toutf8(utf8, utf16);
+	printf("utf16toutf8: 0xD801 0XDC37 > len: %d, 0x%x 0x%x 0x%x 0x%x\n", len, utf8[0], utf8[1], utf8[2], utf8[3]);
+	uint8_t utf88[] = {0xf3, 0xa0, 0x87, 0xad};
+	len = utf8toutf16(utf16, utf88);
+	printf("utf8toutf16: 0xf3 0xa0 0x87 0xad > len: %d, 0x%x 0x%x\n", len, utf16[0], utf16[1]);
+	uint8_t utf888[] = {0xc0, 0x80};
+	uint32_t code_point;
+	len = utf8tounicode(&code_point, utf888);
+	printf("0xc0 0x80 unicode: 0x%x", code_point);
 	return 0;
 }

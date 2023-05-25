@@ -18,4 +18,7 @@ int utf8tounicode(uint32_t *code_point, uint8_t *utf8);
 int unicodetoutf16(uint16_t *utf16, uint32_t code_point);
 int unicodetoutf8(uint8_t *utf8, uint32_t code_point);
 
+int utf8toutf16(uint16_t *utf16, uint8_t *utf8);
+int utf16toutf8(uint8_t *utf8, uint16_t *utf16);
+
 #endif

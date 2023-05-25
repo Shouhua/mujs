@@ -1,3 +1,32 @@
+## 2023-05-25
+- 问题：gitlab ci中使用nvm切换报错，nvm command not found  
+我使用ssh登录后虚拟机后，使用```sudo -i -u gitlab-runner```切换到gitlab-runner用户，安装nvm，本地切换node环境很正常  
+gitlab ci使用用户gitlab-runner用ssh登录系统，在shell环境下执行ci脚本，但是出现上述问题  
+仔细查看nvm文档，发现需要将nvm环境脚本添加到~/.bashrc文件中，我仔细check，发现已经添加了，很迷惑！！！
+最终答案是使用ssh登录时，只是执行了/etc/profile和gitlab-runner用户目录下的~/.bash_profile，但是咱们~/.bash_profile里面没有内容，导致找不到nvm命令；一般情况下，~/.bash_profile文件中会询问是否存在~/.bashrc，存在就加载，比如：
+```shell
+[[ -f "~/.bashrc" ]] && . ~/.bashrc
+```
+- login shell, nonlogin shell, script shell
+1. login shell是咱们登录系统时使用的shell，比如使用ssh登录时候，依次会调用
+```shell
+/etc/profile
+~/.bash_profile # 以下三个遇到就执行，后面不执行
+# ~/.bash_login
+# ~/.profile
+```
+一般情况下，~/.bash_profile文件中会询问是否存在~/.bashrc，存在就加载，比如：
+```shell
+[[ -f "~/.bashrc" ]] && . ~/.bashrc
+```
+2. nonlogin shell是咱们登录系统后，在GUI中打开terminal，这个时候就是这种情况；还有就是使用bash也是此类情况，这种情况会调用~/.bashrc
+3. script shell就是在脚本中运行shell命令，这个只会继承当前shell**导出的**环境变量
+## 2023-05-23
+使用cmake编译系统，详情见CMakeLists.txt，目前暂时支持debug
+## 2023-05-22
+- Unicode编码: [utf8](https://zh.wikipedia.org/wiki/UTF-8), [utf16](https://zh.wikipedia.org/wiki/UTF-16), ucs2
+- [Unicode等价性](https://zh.wikipedia.org/zh-cn/Unicode%E7%AD%89%E5%83%B9%E6%80%A7)：NFC，NFD, NKFC,NKFD
+- [字节序](https://zh.wikipedia.org/zh-cn/%E4%BD%8D%E5%85%83%E7%B5%84%E9%A0%86%E5%BA%8F%E8%A8%98%E8%99%9F): 0xFFFE是不存在的字符codepoint，原始的标记字符是0xFEFF，可以使用这个判断大小端，比如intel小端存储为0xFF 0xFE；utf16是跟系统大小端相关，但是utf8是不相关的，但是有的系统还是在文件头部添加了标识，比如csv使用excel格式打开时，就需要在头部添加编码，在utf8文件BOM是0xFEFF的utf8编码0xEF 0xBB 0xBF
 ## 2023-05-17
 - this  
 jsrun.c->jsR_run->OP_THIS，可以看到this代表执行时调用object

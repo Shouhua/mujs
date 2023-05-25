@@ -182,7 +182,7 @@ int utf8toutf16(uint16_t *utf16, uint8_t *utf8)
 	return unicodetoutf16(utf16, code_point);
 }
 
-int utf16toutf8(uint8_t utf8, uint16_t utf16)
+int utf16toutf8(uint8_t *utf8, uint16_t *utf16)
 {
 	uint32_t code_point;
 	utf16tounicode(&code_point, utf16);
