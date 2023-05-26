@@ -1,5 +1,11 @@
 # Create utfdata.h from UnicodeData.txt
 
+"""
+使用UnicodeData.txt输出utfdata.h，用于unicode操作，包括isalpharune, isupperrune, islowerrune等
+0041;LATIN CAPITAL LETTER A;Lu;0;L;;;;;N;;;;0061;
+GILLAM_UnicodeDemystified.pdf(page 126)
+"""
+
 import sys
 
 tolower = []
@@ -18,6 +24,9 @@ for line in open(sys.argv[1]).readlines():
 		tolower.append((code,int(line[13],16)))
 
 def dumpalpha():
+	"""
+	这个函数主要是为了后面判断字符是否是字符的元数据，数据源分为两个部分，一个是不连续数据，另一个是连续数据，c中数组会是一对一对的	
+	"""
 	table = []
 	prev = 0
 	start = 0
@@ -44,6 +53,10 @@ def dumpalpha():
 	print("};");
 
 def dumpmap(name, input):
+	"""
+	用于大小写数据转换
+	(0x41, 0x5a, 32) 0x41开始，0x5a结束，0x41+32=0x61标识0x41对应大写0x61
+	"""
 	table = []
 	prev_a = 0
 	prev_b = 0
