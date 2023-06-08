@@ -118,6 +118,8 @@ fred = expression
 1. 分支跳转，比如break，continue等，栈情况
 2. GC
 新建对象会使用jsV_newobject, 会将当前object对象放到J->gcobj链表中
+## 2023-06-06
+[gcc -l参数为什么需要放在输入文件后面](https://stackoverflow.com/questions/11893996/why-does-the-order-of-l-option-in-gcc-matter)，因为先扫描输入文件，找到依赖项，然后碰到库文件，会将库文件中对应文件加载，后面再扫描遇到依赖这个库文件的输入文件，不会回溯，所以直接将库文件都放在输入文件后面。
 ## 2023-03-20
 ### variable shadowing
 本地变量覆盖全局变量, 但是在jscompile.c->cvardecs中处理inner function不懂跟这个有什么关系
