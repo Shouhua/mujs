@@ -5,6 +5,15 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "python deploy",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/note/python/deploy_temp.py",
+			"args": ["-c", "${workspaceFolder}/note/python/deploy.json"],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "openssl",
 			"type": "cppdbg",
 			"request": "launch",
@@ -16,16 +25,16 @@
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-					{
-							"description": "Enable pretty-printing for gdb",
-							"text": "-enable-pretty-printing",
-							"ignoreFailures": true
-					},
-					{
-							"description": "Set Disassembly Flavor to Intel",
-							"text": "-gdb-set disassembly-flavor intel",
-							"ignoreFailures": true
-					}
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
 			],
 			// "preLaunchTask": "C/C++: gcc build active file",
 			"miDebuggerPath": "/usr/bin/gdb"
@@ -35,23 +44,25 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
-			"args": ["${workspaceFolder}/note/demo/unicode.js"],
+			"args": [
+				"${workspaceFolder}/note/demo/unicode.js"
+			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-					{
-							"description": "Enable pretty-printing for gdb",
-							"text": "-enable-pretty-printing",
-							"ignoreFailures": true
-					},
-					{
-							"description": "Set Disassembly Flavor to Intel",
-							"text": "-gdb-set disassembly-flavor intel",
-							"ignoreFailures": true
-					}
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
 			],
 			// "preLaunchTask": "C/C++: gcc build active file",
 			"miDebuggerPath": "/usr/bin/gdb"
@@ -61,23 +72,25 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
-			"args": ["${workspaceFolder}/note/demo/demo1.js"],
+			"args": [
+				"${workspaceFolder}/note/demo/demo1.js"
+			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-					{
-							"description": "Enable pretty-printing for gdb",
-							"text": "-enable-pretty-printing",
-							"ignoreFailures": true
-					},
-					{
-							"description": "Set Disassembly Flavor to Intel",
-							"text": "-gdb-set disassembly-flavor intel",
-							"ignoreFailures": true
-					}
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
 			],
 			// "preLaunchTask": "C/C++: gcc build active file",
 			"miDebuggerPath": "/usr/bin/gdb"
@@ -87,23 +100,25 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
-			"args": ["${workspaceFolder}/note/demo/promise.js"],
+			"args": [
+				"${workspaceFolder}/note/demo/promise.js"
+			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-					{
-							"description": "Enable pretty-printing for gdb",
-							"text": "-enable-pretty-printing",
-							"ignoreFailures": true
-					},
-					{
-							"description": "Set Disassembly Flavor to Intel",
-							"text": "-gdb-set disassembly-flavor intel",
-							"ignoreFailures": true
-					}
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
 			],
 			// "preLaunchTask": "C/C++: gcc build active file",
 			"miDebuggerPath": "/usr/bin/gdb"
@@ -113,23 +128,26 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/note/demo/build/curl_libevent",
-			"args": ["https://jsonplaceholder.typicode.com/todos/1", "https://jsonplaceholder.typicode.com/todos/2"],
+			"args": [
+				"https://jsonplaceholder.typicode.com/todos/1",
+				"https://jsonplaceholder.typicode.com/todos/2"
+			],
 			"stopAtEntry": true,
 			"cwd": "${fileDirname}",
 			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-					{
-							"description": "Enable pretty-printing for gdb",
-							"text": "-enable-pretty-printing",
-							"ignoreFailures": true
-					},
-					{
-							"description": "Set Disassembly Flavor to Intel",
-							"text": "-gdb-set disassembly-flavor intel",
-							"ignoreFailures": true
-					}
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
 			],
 			// "preLaunchTask": "C/C++: gcc build active file",
 			"miDebuggerPath": "/usr/bin/gdb"
@@ -146,16 +164,16 @@
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
-					{
-							"description": "Enable pretty-printing for gdb",
-							"text": "-enable-pretty-printing",
-							"ignoreFailures": true
-					},
-					{
-							"description": "Set Disassembly Flavor to Intel",
-							"text": "-gdb-set disassembly-flavor intel",
-							"ignoreFailures": true
-					}
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
 			],
 			// "preLaunchTask": "C/C++: gcc build active file",
 			"miDebuggerPath": "/usr/bin/gdb"

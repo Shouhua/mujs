@@ -1,6 +1,10 @@
-all: ssl_client.c ssl_server.c
-	gcc -g -Wall ssl_client.c -o ssl_client -lssl -lcrypto -DUSE_TLS13
-	gcc -g -Wall ssl_server.c -o ssl_server -lssl -lcrypto
-	gcc -g -Wall main.c -o main
-	g++ -g -Wall bio_file.cpp -o bio_file -lssl -lcrypto
-	gcc -g -Wall simple_tls.c -o simple_tls -lssl -lcrypto
+SRC := $(wildcard *.c) $(wildcard *.cpp)
+DST := $(patsubst %.c, %, $(SRC))
+DST := $(patsubst %.cpp, %, $(DST))
+
+all: $(DST)
+
+%: %.c
+	gcc -g -Wall $< -o $@ -lssl -lcrypto -DUSE_TLS13
+%: %.cpp
+	g++ -g -Wall $< -o $@ -lssl -lcrypto

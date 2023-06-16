@@ -1,6 +1,7 @@
 {
 	"files.associations": {
 		"*.json": "json",
+		"*.c": "c",
 		"utfdata.h": "c",
 		"random": "c",
 		"stddef.h": "c",
@@ -20,6 +21,8 @@
 		"utf.h": "c",
 		"cerrno": "c",
 		"stdint.h": "c",
-		"*.tcc": "c"
+		"*.tcc": "c",
+		"inet.h": "c",
+		"typeinfo": "c"
 	}
 }
