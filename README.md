@@ -1,6 +1,7 @@
 ## 关于
-本工程fork自官方的mujs库，主要用于学习js引擎相关内容，引入libevent和libcurl，实现了简单的timer, xhr, queueMicrotask, promise等接口, 例子可以参见 [xhr.js](./note/demo/xhr.js), [microtask.js](./note/demo/microtask.js)等  
-根目录makefile有更新，主要是添加相关库依赖
+本工程fork自官方的[mujs](https://github.com/ccxvii/mujs)库，
+1. 主要用于学习js引擎相关内容，引入libevent和libcurl，实现了简单的timer, xhr, queueMicrotask, promise等接口, 例子可以参见 [xhr.js](./note/demo/xhr.js), [microtask.js](./note/demo/microtask.js)等, 根目录makefile有添加相关库依赖  
+2. 添加CMakefile.txt
 ## 执行
 ```shell
 sudo apt install libevent-dev curl  # 也可以自行编译相关的库

@@ -1,10 +1,12 @@
 SRC := $(wildcard *.c)
 TARGET := $(patsubst %.c, build/%, $(SRC))
 
+MUJS_OBJ := ../../build/debug/libmujs.o
+
 all: build $(TARGET)
 
 build:
 	mkdir -p build
 
 build/%: %.c
-	gcc -g -Wall $< -o $@ -lssl -lcrypto -DUSE_TLS13
+	gcc -g -Wall -pedantic -Wextra $< $(MUJS_OBJ) -o $@ -levent -lcurl -lm

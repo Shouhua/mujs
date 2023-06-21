@@ -37,19 +37,26 @@ static void jsB_parseInt(js_State *J)
 
 	while (jsY_iswhite(*s) || jsY_isnewline(*s))
 		++s;
-	if (*s == '-') {
+	if (*s == '-')
+	{
 		++s;
 		sign = -1;
-	} else if (*s == '+') {
+	}
+	else if (*s == '+')
+	{
 		++s;
 	}
-	if (radix == 0) {
+	if (radix == 0)
+	{
 		radix = 10;
-		if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) {
+		if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
+		{
 			s += 2;
 			radix = 16;
 		}
-	} else if (radix < 2 || radix > 36) {
+	}
+	else if (radix < 2 || radix > 36)
+	{
 		js_pushnumber(J, NAN);
 		return;
 	}
@@ -66,14 +73,16 @@ static void jsB_parseFloat(js_State *J)
 	char *e;
 	double n;
 
-	while (jsY_iswhite(*s) || jsY_isnewline(*s)) ++s;
+	while (jsY_iswhite(*s) || jsY_isnewline(*s))
+		++s;
 	if (!strncmp(s, "Infinity", 8))
 		js_pushnumber(J, INFINITY);
 	else if (!strncmp(s, "+Infinity", 9))
 		js_pushnumber(J, INFINITY);
 	else if (!strncmp(s, "-Infinity", 9))
 		js_pushnumber(J, -INFINITY);
-	else {
+	else
+	{
 		n = js_stringtofloat(s, &e);
 		if (e == s)
 			js_pushnumber(J, NAN);
@@ -97,21 +106,24 @@ static void jsB_isFinite(js_State *J)
 static void Encode(js_State *J, const char *str_, const char *unescaped)
 {
 	/* NOTE: volatile to silence GCC warning about longjmp clobbering a variable */
-	const char * volatile str = str_;
+	const char *volatile str = str_;
 	js_Buffer *sb = NULL;
 
 	static const char *HEX = "0123456789ABCDEF";
 
-	if (js_try(J)) {
+	if (js_try(J))
+	{
 		js_free(J, sb);
 		js_throw(J);
 	}
 
-	while (*str) {
-		int c = (unsigned char) *str++;
+	while (*str)
+	{
+		int c = (unsigned char)*str++;
 		if (strchr(unescaped, c))
 			js_putc(J, &sb, c);
-		else {
+		else
+		{
 			js_putc(J, &sb, '%');
 			js_putc(J, &sb, HEX[(c >> 4) & 0xf]);
 			js_putc(J, &sb, HEX[c & 0xf]);
@@ -127,20 +139,23 @@ static void Encode(js_State *J, const char *str_, const char *unescaped)
 static void Decode(js_State *J, const char *str_, const char *reserved)
 {
 	/* NOTE: volatile to silence GCC warning about longjmp clobbering a variable */
-	const char * volatile str = str_;
+	const char *volatile str = str_;
 	js_Buffer *sb = NULL;
 	int a, b;
 
-	if (js_try(J)) {
+	if (js_try(J))
+	{
 		js_free(J, sb);
 		js_throw(J);
 	}
 
-	while (*str) {
-		int c = (unsigned char) *str++;
+	while (*str)
+	{
+		int c = (unsigned char)*str++;
 		if (c != '%')
 			js_putc(J, &sb, c);
-		else {
+		else
+		{
 			if (!str[0] || !str[1])
 				js_urierror(J, "truncated escape sequence");
 			a = *str++;
@@ -150,7 +165,8 @@ static void Decode(js_State *J, const char *str_, const char *reserved)
 			c = jsY_tohex(a) << 4 | jsY_tohex(b);
 			if (!strchr(reserved, c))
 				js_putc(J, &sb, c);
-			else {
+			else
+			{
 				js_putc(J, &sb, '%');
 				js_putc(J, &sb, a);
 				js_putc(J, &sb, b);

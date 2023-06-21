@@ -73,7 +73,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
 			"args": [
-				"${workspaceFolder}/note/demo/demo1.js"
+				"${workspaceFolder}/note/js/demo1.js"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",

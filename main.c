@@ -10,7 +10,7 @@
 
 #include "mujs.h"
 
-static char *xoptarg; /* Global argument pointer. */
+static char *xoptarg;	/* Global argument pointer. */
 static int xoptind = 0; /* Global argv index. */
 static int xgetopt(int argc, char *argv[], char *optstring)
 {
@@ -21,38 +21,47 @@ static int xgetopt(int argc, char *argv[], char *optstring)
 
 	xoptarg = NULL;
 
-	if (!scan || *scan == '\0') {
+	if (!scan || *scan == '\0')
+	{
 		if (xoptind == 0)
 			xoptind++;
 
 		if (xoptind >= argc || argv[xoptind][0] != '-' || argv[xoptind][1] == '\0')
 			return EOF;
-		if (argv[xoptind][1] == '-' && argv[xoptind][2] == '\0') {
+		if (argv[xoptind][1] == '-' && argv[xoptind][2] == '\0')
+		{
 			xoptind++;
 			return EOF;
 		}
 
-		scan = argv[xoptind]+1;
+		scan = argv[xoptind] + 1;
 		xoptind++;
 	}
 
 	c = *scan++;
 	place = strchr(optstring, c);
 
-	if (!place || c == ':') {
+	if (!place || c == ':')
+	{
 		fprintf(stderr, "%s: unknown option -%c\n", argv[0], c);
 		return '?';
 	}
 
 	place++;
-	if (*place == ':') {
-		if (*scan != '\0') {
+	if (*place == ':')
+	{
+		if (*scan != '\0')
+		{
 			xoptarg = scan;
 			scan = NULL;
-		} else if (xoptind < argc) {
+		}
+		else if (xoptind < argc)
+		{
 			xoptarg = argv[xoptind];
 			xoptind++;
-		} else {
+		}
+		else
+		{
 			fprintf(stderr, "%s: option requires argument -%c\n", argv[0], c);
 			return ':';
 		}
@@ -65,22 +74,25 @@ static int xgetopt(int argc, char *argv[], char *optstring)
 #include <readline/readline.h>
 #include <readline/history.h>
 #else
-void using_history(void) { }
-void add_history(const char *string) { }
-void rl_bind_key(int key, void (*fun)(void)) { }
-void rl_insert(void) { }
+void using_history(void)
+{
+}
+void add_history(const char *string) {}
+void rl_bind_key(int key, void (*fun)(void)) {}
+void rl_insert(void) {}
 char *readline(const char *prompt)
 {
 	static char line[500], *p;
 	int n;
 	fputs(prompt, stdout);
 	p = fgets(line, sizeof line, stdin);
-	if (p) {
+	if (p)
+	{
 		n = strlen(line);
-		if (n > 0 && line[n-1] == '\n')
+		if (n > 0 && line[n - 1] == '\n')
 			line[--n] = 0;
-		p = malloc(n+1);
-		memcpy(p, line, n+1);
+		p = malloc(n + 1);
+		memcpy(p, line, n + 1);
 		return p;
 	}
 	return NULL;
@@ -99,7 +111,8 @@ static void jsB_gc(js_State *J)
 static void jsB_load(js_State *J)
 {
 	int i, n = js_gettop(J);
-	for (i = 1; i < n; ++i) {
+	for (i = 1; i < n; ++i)
+	{
 		js_loadfile(J, js_tostring(J, i));
 		js_pushundefined(J);
 		js_call(J, 0);
@@ -118,9 +131,11 @@ static void jsB_compile(js_State *J)
 static void jsB_print(js_State *J)
 {
 	int i, top = js_gettop(J);
-	for (i = 1; i < top; ++i) {
+	for (i = 1; i < top; ++i)
+	{
 		const char *s = js_tostring(J, i);
-		if (i > 1) putchar(' ');
+		if (i > 1)
+			putchar(' ');
 		fputs(s, stdout);
 	}
 	putchar('\n');
@@ -130,9 +145,11 @@ static void jsB_print(js_State *J)
 static void jsB_write(js_State *J)
 {
 	int i, top = js_gettop(J);
-	for (i = 1; i < top; ++i) {
+	for (i = 1; i < top; ++i)
+	{
 		const char *s = js_tostring(J, i);
-		if (i > 1) putchar(' ');
+		if (i > 1)
+			putchar(' ');
 		fputs(s, stdout);
 	}
 	js_pushundefined(J);
@@ -146,34 +163,40 @@ static void jsB_read(js_State *J)
 	int n, t;
 
 	f = fopen(filename, "rb");
-	if (!f) {
+	if (!f)
+	{
 		js_error(J, "cannot open file '%s': %s", filename, strerror(errno));
 	}
 
-	if (fseek(f, 0, SEEK_END) < 0) {
+	if (fseek(f, 0, SEEK_END) < 0)
+	{
 		fclose(f);
 		js_error(J, "cannot seek in file '%s': %s", filename, strerror(errno));
 	}
 
 	n = ftell(f);
-	if (n < 0) {
+	if (n < 0)
+	{
 		fclose(f);
 		js_error(J, "cannot tell in file '%s': %s", filename, strerror(errno));
 	}
 
-	if (fseek(f, 0, SEEK_SET) < 0) {
+	if (fseek(f, 0, SEEK_SET) < 0)
+	{
 		fclose(f);
 		js_error(J, "cannot seek in file '%s': %s", filename, strerror(errno));
 	}
 
 	s = malloc(n + 1);
-	if (!s) {
+	if (!s)
+	{
 		fclose(f);
 		js_error(J, "out of memory");
 	}
 
 	t = fread(s, 1, n, f);
-	if (t != n) {
+	if (t != n)
+	{
 		free(s);
 		fclose(f);
 		js_error(J, "cannot read data from file '%s': %s", filename, strerror(errno));
@@ -188,7 +211,8 @@ static void jsB_read(js_State *J)
 static void jsB_readline(js_State *J)
 {
 	char *line = readline("");
-	if (!line) {
+	if (!line)
+	{
 		js_pushnull(J);
 		return;
 	}
@@ -217,9 +241,7 @@ static const char *require_js =
 	"Function('exports', read(name+'.js'))(exports);\n"
 	"return exports;\n"
 	"}\n"
-	"require.cache = Object.create(null);\n"
-;
-
+	"require.cache = Object.create(null);\n";
 
 static const char *stacktrace_js =
 	"Error.prototype.toString = function() {\n"
@@ -227,156 +249,28 @@ static const char *stacktrace_js =
 	"if ('message' in this) s += ': ' + this.message;\n"
 	"if ('stackTrace' in this) s += this.stackTrace;\n"
 	"return s;\n"
-	"};\n"
-;
-
-static const char *promise_js = 
-	"function Promise(handler) {\n"
-	"	this._status = 'pending'\n"
-	"	this._value = null\n"
-	"	this._onFulfilledCallbacks = []\n"
-	"	this._onRejectedCallbacks = []\n"
-	"	try {\n"
-	"		handler(this._resolve.bind(this), this._reject.bind(this))	\n"
-	"	} catch (err) {\n"
-	"		this._reject.bind(this, err)\n"
-	"	}\n"
-	"}\n"
-	"Promise.prototype._resolve = function(_value) {\n"
-	"	var self = this;\n"
-	"	if(self._status === 'pending') {\n"
-	"		self._status = 'fulfilled'\n"
-	"		self._value = _value\n"
-	"		self._onFulfilledCallbacks.forEach(function(fn){\n"
-	"			fn(_value)\n"
-	"		})\n"
-	"	}\n"
-	"}\n"
-	"Promise.prototype._reject = function(_value) {\n"
-	"	var self = this;\n"
-	"	if(self._status === 'pending') {\n"
-	"		self._status = 'rejected'\n"
-	"		self._value = _value\n"
-	"		self._onRejectedCallbacks.forEach(function(fn){\n"
-	"			fn(_value)\n"
-	"		})\n"
-	"	}\n"
-	"}\n"
-	"Promise.prototype.then = function(onFulfilled, onRejected) {\n"
-	"	var self = this;\n"
-	"	return new Promise(function(resolve, reject) {\n"
-	"		if(self._status === 'pending') { // 异步支持，因为setTimeout还没有返回，进来的时候还是pending状态\n"
-	"			self._onFulfilledCallbacks.push(function(){\n"
-	"				try {\n"
-	"					resolve(onFulfilled(self._value))\n"
-	"				} catch(err) {\n"
-	"					reject(err)\n"
-	"				}\n"
-	"			})\n"
-	"			self._onRejectedCallbacks.push(function() {\n"
-	"				try {\n"
-	"					resolve(onRejected(self._value))\n"
-	"				} catch(err) {\n"
-	"					reject(err)\n"
-	"				}\n"
-	"			})\n"
-	"		}\n"
-	"		if(self._status === 'fulfilled') {\n"
-	"			queueMicrotask(function(){\n"
-	"				try {\n"
-	"					// TODO self生效，使用self值为undefined\n"
-	"					resolve(onFulfilled(self._value))\n"
-	"				} catch(err) {\n"
-	"					reject(err)\n"
-	"				}\n"
-	"			})\n"
-	"		}\n"
-	"		if(self._status === 'rejected') {\n"
-	"			queueMicrotask(function(){\n"
-	"				try {\n"
-	"					resolve(onRejected(self._value))\n"
-	"				} catch(err) {\n"
-	"					reject(err)\n"
-	"				}\n"
-	"				\n"
-	"			})\n"
-	"		}\n"
-	"	}) \n"
-	"}\n"
-	"Promise.prototype.catch = function(onRejected) {\n"
-	"	var self = this\n"
-	"	return self.then(undefined, onRejected)\n"
-	"}\n"
-	"Promise.prototype.finally = function(cb) {\n"
-	"	var self = this\n"
-	"	return self.then(\n"
-	"		function(value){ Promise.resolve(cb()).then(function(){return value})},\n"
-	"		function(reason) {Promise.resolve(cb()).then(function() {throw reason })}\n"
-	"	)\n"
-	"}\n"
-	"Promise.prototype.done = function(onFulfilled, onRejected) {\n"
-	"	var self = this\n"
-	"	self.then(onFulfilled, onRejected)\n"
-	"		.catch(function(reason) {\n"
-	"			throw(reason)\n"
-	"		})\n"
-	"}\n"
-	"Promise.resolve = function(value) {\n"
-	"	if(value instanceof Promise) return value\n"
-	"	return new Promise(function(resolve) {resolve(value)})\n"
-	"}\n"
-	"Promise.reject = function(value) {\n"
-	"	if(value instanceof Promise) return value\n"
-	"	return new Promise(function(resolve, reject) {reject(value)})\n"
-	"}\n"
-	"Promise.all = function(promises) {\n"
-	"	return new Promise(function(resolve, reject) {\n"
-	"		var result = []\n"
-	"		var count = 0\n"
-	"		for(var i = 0; i < promises.length; i++) {\n"
-	"			Promise.resolve(promises[i]).then(function(res) {\n"
-	"				result.push(res)\n"
-	"				count++\n"
-	"				if(count === promises.length) {\n"
-	"					resolve(result)\n"
-	"				}\n"
-	"			}, function(err) {\n"
-	"				reject(err)\n"
-	"			})\n"
-	"		}\n"
-	"	})\n"
-	"}\n"
-	"Promise.reace = function(promises) {\n"
-	"	return new Promise(function(resolve, reject) {\n"
-	"		for(var i = 0; i < promises.length; i++) {\n"
-	"			Promise.resolve(promises[i]).then(function(res) {\n"
-	"				resolve(res)\n"
-	"			}, function(err) {\n"
-	"				reject(err)\n"
-	"			})\n"
-	"		}\n"
-	"	})\n"
-	"}\n"
-;
+	"};\n";
 
 static const char *console_js =
-	"var console = { log: print, debug: print, warn: print, error: print };"
-;
+	"var console = { log: print, debug: print, warn: print, error: print };";
 
 static int eval_print(js_State *J, const char *source)
 {
-	if (js_ploadstring(J, "[stdin]", source)) {
+	if (js_ploadstring(J, "[stdin]", source))
+	{
 		fprintf(stderr, "%s\n", js_trystring(J, -1, "Error"));
 		js_pop(J, 1);
 		return 1;
 	}
 	js_pushundefined(J);
-	if (js_pcall(J, 0)) {
+	if (js_pcall(J, 0))
+	{
 		fprintf(stderr, "%s\n", js_trystring(J, -1, "Error"));
 		js_pop(J, 1);
 		return 1;
 	}
-	if (js_isdefined(J, -1)) {
+	if (js_isdefined(J, -1))
+	{
 		printf("%s\n", js_tryrepr(J, -1, "can't convert to string"));
 	}
 	js_pop(J, 1);
@@ -389,9 +283,11 @@ static char *read_stdin(void)
 	int t = 512;
 	char *s = NULL;
 
-	for (;;) {
+	for (;;)
+	{
 		char *ss = realloc(s, t);
-		if (!ss) {
+		if (!ss)
+		{
 			free(s);
 			fprintf(stderr, "cannot allocate storage for stdin contents\n");
 			return NULL;
@@ -403,7 +299,8 @@ static char *read_stdin(void)
 		t *= 2;
 	}
 
-	if (ferror(stdin)) {
+	if (ferror(stdin))
+	{
 		free(s);
 		fprintf(stderr, "error reading stdin\n");
 		return NULL;
@@ -421,8 +318,7 @@ static void usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	char *input;
 	js_State *J;
@@ -432,16 +328,25 @@ main(int argc, char **argv)
 	int interactive = 0;
 	int i, c;
 
-	while ((c = xgetopt(argc, argv, "is")) != -1) {
-		switch (c) {
-		default: usage(); break;
-		case 'i': interactive = 1; break;
-		case 's': strict = 1; break;
+	while ((c = xgetopt(argc, argv, "is")) != -1)
+	{
+		switch (c)
+		{
+		default:
+			usage();
+			break;
+		case 'i':
+			interactive = 1;
+			break;
+		case 's':
+			strict = 1;
+			break;
 		}
 	}
 
 	J = js_newstate(NULL, NULL, strict ? JS_STRICT : 0);
-	if (!J) {
+	if (!J)
+	{
 		fprintf(stderr, "Could not initialize MuJS.\n");
 		exit(1);
 	}
@@ -477,17 +382,21 @@ main(int argc, char **argv)
 	js_dostring(J, stacktrace_js);
 	js_dostring(J, console_js);
 
-	js_dostring(J, promise_js);
-	// js_dofile(J, "./promise.js");
+	// js_dostring(J, promise_js);
+	js_dofile(J, "./promise.js");
 
-	if (xoptind == argc) {
+	if (xoptind == argc)
+	{
 		interactive = 1;
-	} else {
+	}
+	else
+	{
 		c = xoptind++;
 
 		js_newarray(J);
 		i = 0;
-		while (xoptind < argc) {
+		while (xoptind < argc)
+		{
 			js_pushstring(J, argv[xoptind++]);
 			js_setindex(J, -2, i++);
 		}
@@ -500,14 +409,17 @@ main(int argc, char **argv)
 		js_runloop(loop);
 	}
 
-	if (interactive) {
+	if (interactive)
+	{
 		printf("Welcome to MuJS %d.%d.%d.\n",
-			JS_VERSION_MAJOR, JS_VERSION_MINOR, JS_VERSION_PATCH);
-		if (isatty(0)) {
+			   JS_VERSION_MAJOR, JS_VERSION_MINOR, JS_VERSION_PATCH);
+		if (isatty(0))
+		{
 			using_history();
 			rl_bind_key('\t', rl_insert);
 			input = readline(PS1);
-			while (input) {
+			while (input)
+			{
 				eval_print(J, input);
 				if (*input)
 					add_history(input);
@@ -515,7 +427,9 @@ main(int argc, char **argv)
 				input = readline(PS1);
 			}
 			putchar('\n');
-		} else {
+		}
+		else
+		{
 			input = read_stdin();
 			if (!input || !js_dostring(J, input))
 				status = 1;

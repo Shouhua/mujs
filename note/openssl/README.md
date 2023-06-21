@@ -1,3 +1,18 @@
+## 文件列表
+1. [bio_file.c](./bio_file.c), openssl bio demo
+2. [ifnet.c](./ifnet.c), getifaddrs()
+3. [simple_tls.c](./simple_tls.c), simple ssl socket server
+4. [ssl_server.c](./ssl_server.c), simple ssl socket server
+5. [ssl_client.c](./ssl_client.c), simple ssl socket client
+### 执行说明
+1. ./build/bio_file test_output.txt test_source.txt
+2. 使用wireshark测试ssl协议
+```shell
+# 打开wireshark，监听local网卡，过滤规则：tcp.port == 7838
+# 配置wireshark解密tls协议，配置tls协议的"RSA keys list"和"(Pre)-Master-Secret log filename"，前者是生成证书时的私钥private.pem，后者是程序执行时生成master_key.txt
+./ssl_server 
+./ssl_client 127.0.0.1 7838
+```
 ## openssl
 主要使用openssl库的各种demo文件,可能比较偏底层，各种资料比较少，官网的文档门槛较高
 ## bio and evp

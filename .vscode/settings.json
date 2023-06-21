@@ -23,6 +23,12 @@
 		"stdint.h": "c",
 		"*.tcc": "c",
 		"inet.h": "c",
-		"typeinfo": "c"
+		"typeinfo": "c",
+		"readline.h": "c",
+		"history.h": "c",
+		"wait.h": "c",
+		"atomic": "c",
+		"list.h": "c",
+		"mujs.h": "c"
 	}
 }

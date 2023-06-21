@@ -1,27 +1,30 @@
 /*
-* 读取json文件，在js中操作后返回c
-*/
+ * 读取json文件，在js中操作后返回c
+ */
 #include <stdio.h>
 #include <stdlib.h>
-#include "mujs.h"
+#include "../../mujs.h"
 
 static void jsB_print(js_State *J)
 {
 	int i, top = js_gettop(J);
-	for (i = 1; i < top; ++i) {
+	for (i = 1; i < top; ++i)
+	{
 		const char *s = js_tostring(J, i);
-		if (i > 1) putchar(' ');
+		if (i > 1)
+			putchar(' ');
 		fputs(s, stdout);
 	}
 	putchar('\n');
 	js_pushundefined(J);
 }
 static const char *console_js =
-	"var console = { log: print, debug: print, warn: print, error: print };"
-;
+	"var console = { log: print, debug: print, warn: print, error: print };";
 
-int main (int argc, char *argv[]) {
-	if(argc != 2) {
+int main(int argc, char *argv[])
+{
+	if (argc != 2)
+	{
 		fprintf(stderr, "USAGE: demo2 json_file");
 	}
 	FILE *f = fopen(argv[1], "r");
@@ -29,7 +32,7 @@ int main (int argc, char *argv[]) {
 	unsigned int len = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	char *menu = (char *)malloc(len+1);
+	char *menu = (char *)malloc(len + 1);
 	fread(menu, 1, len, f);
 	menu[len] = 0;
 

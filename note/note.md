@@ -1,3 +1,77 @@
+## 2023-06-20
+- ptrace和debugger  
+1. [调试器工作原理](https://abcdxyzk.github.io/blog/2013/11/29/debug-debuger-1/)  
+2. [How Debuggers Works](https://eli.thegreenplace.net/2011/01/23/how-debuggers-work-part-1)
+- 可变参数函数
+[va_func.c](./c/va_func.c)
+- 新的字体
+[Iosevka](https://github.com/be5invis/Iosevka)
+## 2023-06-19
+- 源码中Object初始对象新建过程：
+1. 新建Object prototype object
+2. 添加prototype方法，比如Object.prototype.hasOwnProperty
+3. 新建Object，填充Object的prototype对象、constructor、cfun(不知道叫啥，直接使用对象初始化时调用)
+4. 添加Object方法，比如Object.defineProperty
+5. 定义全局对象“Object”，并且关联到前面的Object对象  
+**定义constructor时候，签名如下，其中cfun用于直接引用时调用，比如Object(3)，ccon用于使用new时调用，比如new Object(3)**
+```c
+void js_newcconstructor(js_State *J, js_CFunction cfun, js_CFunction ccon, const char *name, int length);
+```
+- ECDSA, ECDH
+Ecliptic Curve Digital Signed Algorithm
+Ecliptic Curve Diffie-Hellman
+- seek, ftell VS stat
+前者属于标准库，用于普通文件，不适用于如管道、设备文件等；后者能提供除大小外的详细信息
+- readline库
+```shell
+#include <stdio.h>
+#include <stdlib.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+#define HISTORY_FILE ".myapp_history"
+
+int main() {
+    char* input;
+    
+    // 加载历史记录文件
+    char history_file_path[256];
+    snprintf(history_file_path, sizeof(history_file_path), "%s/%s", getenv("HOME"), HISTORY_FILE);
+    using_history();
+    read_history(history_file_path);
+
+    while ((input = readline("> ")) != NULL) {
+        if (input[0] != '\0') {
+            // 处理输入的命令
+            printf("Input: %s\n", input);
+        }
+
+        // 将命令行添加到历史记录并写入文件
+        add_history(input);
+        write_history(history_file_path);
+
+        free(input);
+    }
+
+    return 0;
+}
+```
+- inode、软链接、硬链接
+inode属于文件系统概念，文件描述符表属于进程概念，信息存储在PCB中，每个进程有一份数据
+1. 创建软链接时，操作系统会创建一个新的普通文件，并将该文件的内容设置为指向原始文件或目录的路径。
+文件系统会分配一个新的inode给这个软链接文件，并在该inode的数据区域存储软链接的内容。
+当访问软链接时，操作系统读取软链接的内容并跳转到对应路径的文件或目录。
+2. 创建硬链接时，操作系统在同一个目录下为目标文件或目录创建一个新的目录项，与原始文件或目录共享相同的inode。
+目录项包含文件名和inode号码，通过目录项来查找和访问文件。
+即使创建多个硬链接，它们在文件系统中仍然只有一个inode，因此它们共享相同的元数据和数据块。
+- gdb的mi模式
+```shell
+gdb -i=mi ./test
+# a. 发送 -break-insert main 命令设置在 main 函数上的断点。
+# b. 发送 -exec-run 命令运行程序。
+# c. 接收 GDB 返回的响应，其中包含断点命中的信息和程序输出。
+# d. 可以使用其他的 MI 命令，如 -data-evaluate-expression 来评估表达式，或者 -stack-list-variables 来列出当前栈帧中的变量。
+```
 ## 2023-05-25
 - 问题：gitlab ci中使用nvm切换报错，nvm command not found  
 我使用ssh登录后虚拟机后，使用```sudo -i -u gitlab-runner```切换到gitlab-runner用户，安装nvm，本地切换node环境很正常  
