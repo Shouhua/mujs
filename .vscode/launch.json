@@ -9,7 +9,10 @@
 			"type": "python",
 			"request": "launch",
 			"program": "${workspaceFolder}/note/python/deploy_temp.py",
-			"args": ["-c", "${workspaceFolder}/note/python/deploy.json"],
+			"args": [
+				"-c",
+				"${workspaceFolder}/note/python/deploy.json"
+			],
 			"console": "integratedTerminal",
 			"justMyCode": true
 		},
@@ -68,12 +71,12 @@
 			"miDebuggerPath": "/usr/bin/gdb"
 		},
 		{
-			"name": "simple",
+			"name": "array",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/debug/mujs",
 			"args": [
-				"${workspaceFolder}/note/js/demo1.js"
+				"${workspaceFolder}/note/js/array.js"
 			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",

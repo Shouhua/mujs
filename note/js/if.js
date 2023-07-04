@@ -1,0 +1,136 @@
+/* 0 lastline
+13 undefined
+1 lastline
+6 op_integer, 
+32771 (a=3), 
+1 lastline, 
+20 op_setlocal, 
+1(vartab index), 
+1 lastline, 
+0 op_pop, 
+2 lastline, 
+19 op_getlocal, 
+1 (var table index for a的值）, 
+2 lastline, 
+6 op_integer, 
+32771 3, 
+2 lastline, 
+61 op_GT, 
+2 lastline, 
+82 op_JTRUE, 
+92 offset值, 如果大于就跳到92的code去执行 
+4 lastline
+19 op_getlocal, 
+1 var table index(a), 
+4 lastline, 
+6 op_integer, 
+32771 (3), 
+4 lastline, 
+60 op_LT, 
+4 lastline, 
+82 op_JTRUE, 
+62 offset, 
+7 lastline, 
+0 op_pop, 
+7 lastline, 
+23 op_GETVAR, 
+26548,
+21854, 
+21845,
+0, (str = console)
+7 lastline, 
+1 op_dup, 
+7 lastline, 
+33 op_getprop_s, 
+49780, 
+21851, 
+21845, 
+0, （str=log)
+7 lastline, 
+3 op_rot2, 
+7 lastline, 
+8 op_string, 
+61364, 
+21854, 
+21845, 
+0, (a is equal to 3)
+7 lastline, 
+41 op_call, 
+1 1个参数, 
+4 lastline, 
+81 op_jump, 
+89 跳转的地点, 
+5, // else if成立跳到这儿
+0, 
+5, 
+23, 
+26548, 
+21854, 
+21845, 
+0, 
+5, 
+1,
+5, 
+33, 
+49780,
+21851,
+21845, 
+0, 
+5, 
+3, 
+5, 
+8, 
+60228, 
+21854, 
+21845, 
+0, 
+5, 
+41, 
+1, 
+2 lastline, 
+81 op_jump, 
+119 跳转指令（跳到end）, 
+3, // if判断成立跳转到这儿
+0, 
+3, 
+23, 
+26548, 
+21854, 
+21845, 
+0, 
+3, 
+1, 
+3, 
+33, 
+49780, 
+21851, 
+21845, 
+0, 
+3, 
+3, 
+3, 
+8, 
+23540, 
+21855, 
+21845, 
+0, 
+3, 
+41, 
+1, 
+3 lastline, 
+84 op_return */
+/*
+ast list
+IF statment A: [a, b, c, d=0]
+a = exp_gt
+b = stm_block -> a(ast_list) -> a(exp_call)
+c = smt_if[a(exp_lt), b(stm_block), c(stm_block), d=0]
+*/
+var a = 3
+if(a > 3) {
+    console.log('a is greeter than 3')
+} else if(a < 3) {
+    console.log('a is lesser than 3')
+} else {
+    console.log('a is equal to 3')
+}

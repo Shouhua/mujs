@@ -1,3 +1,22 @@
+## 2023-06-25
+- [GDB Convenience Vars and Functions](https://sourceware.org/gdb/onlinedocs/gdb/Convenience-Vars.html#Convenience-Vars)
+```shell
+# gdb set conditional breakpoint
+b jsstate.c:109 if $_streq(filename, "if.js")
+```
+- 优化点：if/else if/else太多opcode，是不是可以在编译阶段判断语言丢弃不用的分支?
+- if的opcode见文件[if.js](./js/if.js)
+- -0和+0，浮点数标准，30.0/0 VS -30.0/0
+```c
+/* math.h 提供了相关的定义和宏*/
+NAN;
+INFINITY;
+int fpclassify(x);
+int isfinite(x);
+int isnan(x);
+int isinf(x);
+static __inline int signbit(double x) { __int64 i; memcpy(&i, &x, 8); return i>>63; }
+```
 ## 2023-06-20
 - ptrace和debugger  
 1. [调试器工作原理](https://abcdxyzk.github.io/blog/2013/11/29/debug-debuger-1/)  

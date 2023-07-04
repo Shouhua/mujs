@@ -29,6 +29,7 @@
 		"wait.h": "c",
 		"atomic": "c",
 		"list.h": "c",
-		"mujs.h": "c"
+		"mujs.h": "c",
+		"cmath": "c"
 	}
 }
