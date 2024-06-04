@@ -29,5 +29,5 @@ curl_global_cleanup();
 - multi handle
 multi handle稍微复杂点，可以参考demo中的[curl_multi.c](./demo/curl_multi.c)，还有引入第三份event库，比如libevent实现单线程多路复用实现同时下载多个transfer，参考[multi-event.c](./demo/multi-event.c), [curl_libevent.c](./demo/curl_libevent.c)<br/>
 需要注意的点是：
-1. 不管是引入disanfangevent库，还是使用libcurl的multi handle，都是要跟libcurl的socket和timeout通信
+1. 不管是引入第三方event库，还是使用libcurl的multi handle，都是要跟libcurl的socket和timeout通信
 2. 可以想象成libcurl multi有自己的event loop，注册socket和timeout函数，发生event时，转化成libevent的事件和timeout，反向也是一样

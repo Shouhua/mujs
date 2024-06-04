@@ -39,8 +39,10 @@ with open('file_path', 'r+') as f:
 
 r, r+, w, w+, a, a+要注意以下几点：
 1. 文件不存在是否新建，r和r+不存在报错，其他会新建
-2. 文件指针位置。r和r+默认文件智能在开头，其他默认都在结尾，并且a和a+模式下一定会写入结尾，使用seek调整文件智能无效
+2. 文件指针位置。r和r+默认文件指针在开头，其他默认都在结尾，并且a和a+模式下一定会写入结尾，使用seek调整文件指针无效
+
 ## unittest
 python内置的单元测试库，例子见[test.py](./test.py)。继承```unittest.TestCase```，每个测试用例(test case)就是一个方法，使用各种assert方法测试。
+
 ## __pycache__文件夹
 当import本地的python文件时，会生成__pycache__文件夹写入相关文件的python字节码(扩展为pyc)，以保持加载效率

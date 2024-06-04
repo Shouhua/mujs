@@ -1,3 +1,11 @@
+## 2024-05-15
+### Makefile
+- `@D` 表示目标文件的目录
+```bash
+build/debug/mujs: one.c
+    mkdir -p $(@D)
+```
+
 ## 2023-06-25
 - [GDB Convenience Vars and Functions](https://sourceware.org/gdb/onlinedocs/gdb/Convenience-Vars.html#Convenience-Vars)
 ```shell
