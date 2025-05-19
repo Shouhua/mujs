@@ -1,3 +1,85 @@
+## 2024-12-07
+使用ingress-nginx时，注意本地proxy和all_proxy等会干扰curl请求
+```bash
+# -b 使用cookies.txt里面的内容作为cookie发送, 也可以使用key=value的形式传递键值对
+# -c 保存cookie到文件 
+curl -b cookies.txt -c cookies.txt --noproxy '*' --resolve kubia.example.com:80:127.0.0.1 http://kubia.example.com
+```
+
+## 2024-11-30
+### ffmpeg hello/remuxing
+avformat_open_input就是初始化了avformat context
+
+### vscode配置lldb
+https://code.visualstudio.com/docs/cpp/lldb-mi
+默认情况下，mac平台使用gdb，各种codesign等，搞不定，还是使用平台自带的clang和lldb，但是默认情况下lldb-mi没有显示的包括进来，所以在设置的时候要设置全路径，另外可以在lldb前执行task任务，可以执行编译命令或者执行make执行
+```json
+// launch.json 配置
+{
+    "name": "ffmpeg-hello",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/note/ffmpeg/hello",
+    "args": ["bbb_sunflower_1080p_30fps_normal.mp4"],
+    "stopAtEntry": true,
+    "cwd": "${workspaceFolder}/note/ffmpeg/",
+    "environment": [],
+    "externalConsole": false,
+    "targetArchitecture": "x64",
+    "MIMode": "gdb",
+    "miDebuggerPath": "/Users/pengshouhua/.vscode/extensions/ms-vscode.cpptools-1.22.11-darwin-x64/debugAdapters/lldb-mi/bin/lldb-mi",
+    "preLaunchTask": "build ffmpeg hello" // 指定在调试前执行的任务
+}
+
+// task.json
+{
+    "label": "build ffmpeg hello",
+    "type": "shell",
+    "options": {
+        "cwd": "${workspaceFolder}/note/ffmpeg" // 指定当前执行的目录
+    },
+    "command": "make",
+    "args": [
+        "hello" // make hello
+    ],
+    "group": {
+        "kind": "build",
+        "isDefault": true
+    },
+    "problemMatcher": ["$gcc"],
+    "detail": "Build the project using Make"
+}
+```
+
+## 2024-11-29
+### ffmpeg录音
+```bash
+ffmpeg -hide_banner -list_devices true -f avfoundation -i "" # 列出系统支持的视频和音频源
+ffmpeg -y -hide_banner -f avfoundation -i ":1" -t 30 out.wav
+ffmpeg -y -hide_banner -f avfoundation -capture_cursor 1 -i "3:1" -r:v 30 out.mp4 # 录屏包括鼠标
+ffplay -autoexit out.wav
+
+ffmpeg -h -encoder=libopus
+
+ffplay -help demuxer=f32le
+ffplay -hide_banner -autoexit -f s16le -sample_rate 44100 -ch_layout 1 -i audio.pcm
+
+ffmpeg -f f32le -i audio.pcm -f s16le -sample_rate 44100 -ac 2 audio_resample.pcm
+ffplay -hide_banner -autoexit -f s16le -sample_rate 44100 -ch_layout stereo audio_resample.pcm
+```
+
+## 2024-11-14
+```js
+JSON.parse(document.querySelector('.dplayer').attributes['data-config'].textContent).video.url
+```
+1. get html
+2. get m3u8 url
+3. get video by ffmpeg
+TODO: 处理一个页面多个视频 20231, 114286
+```bash
+ffmpeg -protocol_whitelist file,http,https,tcp,tls,crypto -i "https://m3u8.url" -acodec copy -vcodec copy out.mp4
+```
+
 ## 2024-05-15
 ### Makefile
 - `@D` 表示目标文件的目录

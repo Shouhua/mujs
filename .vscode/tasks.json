@@ -1,6 +1,23 @@
 {
     "tasks": [
         {
+            "label": "build ffmpeg hello",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/note/ffmpeg"
+            },
+            "command": "make",
+            "args": [
+                "dispaly"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Build the project using Make"
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: gcc build active file",
             "command": "/usr/bin/gcc",

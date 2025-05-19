@@ -5,6 +5,53 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "ffmpeg-display",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/note/ffmpeg/display",
+			"args": [
+				"${workspaceFolder}/note/ffmpeg/bbb_sunflower_1080p_30fps_normal.mp4"
+			],
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}/note/ffmpeg/",
+			"environment": [],
+			"externalConsole": false,
+			"targetArchitecture": "x64",
+			"MIMode": "gdb",
+			"miDebuggerPath": "/Users/pengshouhua/.vscode/extensions/ms-vscode.cpptools-1.22.11-darwin-x64/debugAdapters/lldb-mi/bin/lldb-mi",
+			"setupCommands": [
+					{
+							"description": "Enable pretty-printing for gdb",
+							"text": "-enable-pretty-printing",
+							"ignoreFailures": true
+					}
+			]
+		},
+		{
+			"name": "ffmpeg-hello",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/note/ffmpeg/hello",
+			"args": [
+				"${workspaceFolder}/note/ffmpeg/bbb_sunflower_1080p_30fps_normal.mp4"
+			],
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}/note/ffmpeg/",
+			"environment": [],
+			"externalConsole": false,
+			"targetArchitecture": "x64",
+			"MIMode": "gdb",
+			"miDebuggerPath": "/Users/pengshouhua/.vscode/extensions/ms-vscode.cpptools-1.22.11-darwin-x64/debugAdapters/lldb-mi/bin/lldb-mi",
+			"setupCommands": [
+					{
+							"description": "Enable pretty-printing for gdb",
+							"text": "-enable-pretty-printing",
+							"ignoreFailures": true
+					}
+			],
+			"preLaunchTask": "build ffmpeg hello" // 指定在调试前执行的任务
+		},
+		{
 			"name": "python deploy",
 			"type": "python",
 			"request": "launch",
